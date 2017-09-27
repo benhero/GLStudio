@@ -45,7 +45,7 @@ public class HiGLRenderer implements GLSurfaceView.Renderer {
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
         // 设置清屏颜色,但不执行清屏操作
-        GLES20.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+        GLES20.glClearColor(1.0f, 1.0f, 0.0f, 0.0f);
         // 设置深度
 //        gl.glClearDepthf(0f);
     }
@@ -53,7 +53,7 @@ public class HiGLRenderer implements GLSurfaceView.Renderer {
     @Override
     public void onSurfaceChanged(GL10 gl, int width, int height) {
         // 设置窗口大小
-        gl.glViewport(0, 0, width, height);
+        gl.glViewport(0, 0, width, width);
     }
 
     @Override
