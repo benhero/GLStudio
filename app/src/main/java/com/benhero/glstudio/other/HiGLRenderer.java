@@ -1,9 +1,7 @@
-package com.benhero.glstudio.hi;
+package com.benhero.glstudio.other;
 
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
-
-import com.benhero.glstudio.GLUtils;
 
 import java.nio.FloatBuffer;
 
@@ -11,7 +9,7 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 /**
- * com.benhero.glstudio.hi
+ * com.benhero.glstudio.other.hi
  *
  * @author benhero
  */

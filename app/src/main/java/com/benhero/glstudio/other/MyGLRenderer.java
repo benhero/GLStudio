@@ -1,4 +1,4 @@
-package com.benhero.glstudio;
+package com.benhero.glstudio.other;
 
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
