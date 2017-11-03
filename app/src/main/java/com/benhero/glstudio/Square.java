@@ -10,7 +10,7 @@ import java.nio.ShortBuffer;
 /**
  * com.benhero.glstudio
  *
- * @author chenbenbin
+ * @author benhero
  */
 public class Square {
 

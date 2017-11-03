@@ -4,7 +4,7 @@ import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
-import com.benhero.glstudio.l1.PointRenderer1;
+import com.benhero.glstudio.l2.OrthoRenderer3;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -16,7 +16,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         mGLSurfaceView = new GLSurfaceView(this);
         mGLSurfaceView.setEGLContextClientVersion(2);
-        mGLSurfaceView.setRenderer(new PointRenderer1(this));
+        mGLSurfaceView.setRenderer(new OrthoRenderer3(this));
         setContentView(mGLSurfaceView);
     }
 

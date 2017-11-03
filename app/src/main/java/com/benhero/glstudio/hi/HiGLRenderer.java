@@ -12,9 +12,8 @@ import javax.microedition.khronos.opengles.GL10;
 
 /**
  * com.benhero.glstudio.hi
- * z
  *
- * @author chenbenbin
+ * @author benhero
  */
 public class HiGLRenderer implements GLSurfaceView.Renderer {
     //顶点数组

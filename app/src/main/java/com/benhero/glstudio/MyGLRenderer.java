@@ -10,7 +10,7 @@ import javax.microedition.khronos.opengles.GL10;
 /**
  * com.benhero.glstudio
  *
- * @author chenbenbin
+ * @author benhero
  */
 public class MyGLRenderer implements GLSurfaceView.Renderer {
     private Triangle mTriangle;

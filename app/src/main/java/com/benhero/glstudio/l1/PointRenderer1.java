@@ -67,11 +67,11 @@ public class PointRenderer1 implements Renderer {
      */
     private final FloatBuffer mVertexData;
     /**
-     * 颜色uniform在OpenGL程序中的位置编号
+     * 颜色uniform在OpenGL程序中的索引
      */
     private int uColorLocation;
     /**
-     * 顶点坐标在OpenGL程序中的位置编号
+     * 顶点坐标在OpenGL程序中的索引
      */
     private int aPositionLocation;
     /**
@@ -126,16 +126,16 @@ public class PointRenderer1 implements Renderer {
         // 步骤4：通知OpenGL开始使用该程序
         GLES20.glUseProgram(mProgram);
 
-        // 步骤5：获取颜色Uniform在OpenGL程序中的位置
+        // 步骤5：获取颜色Uniform在OpenGL程序中的索引
         uColorLocation = GLES20.glGetUniformLocation(mProgram, U_COLOR);
 
-        // 步骤6：获取顶点坐标属性在OpenGL程序中的位置编号
+        // 步骤6：获取顶点坐标属性在OpenGL程序中的索引
         aPositionLocation = GLES20.glGetAttribLocation(mProgram, A_POSITION);
 
         // 将缓冲区的指针移动到头部，保证数据是从最开始处读取
         mVertexData.position(0);
         // 步骤7：关联顶点坐标属性和缓存数据
-        // 1. 位置属性；
+        // 1. 位置索引；
         // 2. 每个顶点属性需要关联的分量个数(必须为1、2、3或者4。初始值为4。),即每个相邻顶点之间在数组中的间隔(字节数)；
         // 3. 数据类型；
         // 4. 指定当被访问时，固定点数据值是否应该被归一化(GL_TRUE)或者直接转换为固定点值(GL_FALSE)(只有使用整数数据时)
@@ -144,7 +144,7 @@ public class PointRenderer1 implements Renderer {
         GLES20.glVertexAttribPointer(aPositionLocation, POSITION_COMPONENT_COUNT, GLES20.GL_FLOAT,
                 false, 0, mVertexData);
 
-        // 步骤8：通知GL程序使用指定的顶点属性位置
+        // 步骤8：通知GL程序使用指定的顶点属性索引
         GLES20.glEnableVertexAttribArray(aPositionLocation);
     }
 
@@ -159,7 +159,7 @@ public class PointRenderer1 implements Renderer {
         // 步骤1：使用glClearColor设置的颜色，刷新Surface
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
 
-        // 步骤2：更新U_COLOR的值，即更新画笔颜色
+        // 步骤2：更新u_Color的值，即更新画笔颜色
         GLES20.glUniform4f(uColorLocation, 0.0f, 0.0f, 1.0f, 1.0f);
         // 步骤3：使用数组绘制图形：1.绘制的图形类型；2.从顶点数组读取的起点；3.从顶点数组读取的数据长度
         GLES20.glDrawArrays(GLES20.GL_POINTS, 0, 1);

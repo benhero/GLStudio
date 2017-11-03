@@ -9,7 +9,7 @@ import java.nio.FloatBuffer;
 /**
  * com.benhero.glstudio
  *
- * @author chenbenbin
+ * @author benhero
  */
 public class GLUtils {
 
