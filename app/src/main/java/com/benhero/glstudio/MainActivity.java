@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.benhero.glstudio.l1.PointRenderer1;
 
+
 public class MainActivity extends AppCompatActivity {
 
     private GLSurfaceView mGLSurfaceView;
