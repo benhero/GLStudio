@@ -20,7 +20,7 @@ import javax.microedition.khronos.opengles.GL10;
  *
  * @author benhero
  */
-public class ColorfulRenderer4 implements Renderer {
+public class ColorfulRenderer5 implements Renderer {
     private static final String VERTEX_SHADER = "" +
             "uniform mat4 u_Matrix;\n" +
             "attribute vec4 a_Position;\n" +
@@ -82,7 +82,7 @@ public class ColorfulRenderer4 implements Renderer {
             0, 0, 0, 1,
     };
 
-    public ColorfulRenderer4(Context context) {
+    public ColorfulRenderer5(Context context) {
         mContext = context;
 
         mVertexData = ByteBuffer
