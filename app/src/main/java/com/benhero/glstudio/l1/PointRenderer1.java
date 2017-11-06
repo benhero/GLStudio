@@ -31,7 +31,7 @@ public class PointRenderer1 implements Renderer {
     //关键字 概念：
     // 1. uniform 由外部程序传递给 shader，就像是C语言里面的常量，shader 只能用，不能改；
     // 2. attribute 是只能在 vertex shader 中使用的变量；
-    // 3. varying 变量是 vertex 和 fragment shader 之间做数据传递用的。
+    // 3. varying 变量是 vertex shader 和 fragment shader 之间做数据传递用的。
     // 更多说明：http://blog.csdn.net/jackers679/article/details/6848085
     /**
      * 顶点着色器：之后定义的每个都会传1次给顶点着色器
@@ -136,7 +136,7 @@ public class PointRenderer1 implements Renderer {
         mVertexData.position(0);
         // 步骤7：关联顶点坐标属性和缓存数据
         // 1. 位置索引；
-        // 2. 每个顶点属性需要关联的分量个数(必须为1、2、3或者4。初始值为4。),即每个相邻顶点之间在数组中的间隔(字节数)；
+        // 2. 每个顶点属性需要关联的分量个数(必须为1、2、3或者4。初始值为4。)；
         // 3. 数据类型；
         // 4. 指定当被访问时，固定点数据值是否应该被归一化(GL_TRUE)或者直接转换为固定点值(GL_FALSE)(只有使用整数数据时)
         // 5. 指定连续顶点属性之间的偏移量。如果为0，那么顶点属性会被理解为：它们是紧密排列在一起的。初始值为0。

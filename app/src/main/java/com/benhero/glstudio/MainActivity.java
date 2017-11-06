@@ -4,8 +4,7 @@ import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
-import com.benhero.glstudio.l2.OrthoRenderer3;
-
+import com.benhero.glstudio.l3.ColorfulRenderer4;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -16,7 +15,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         mGLSurfaceView = new GLSurfaceView(this);
         mGLSurfaceView.setEGLContextClientVersion(2);
-        mGLSurfaceView.setRenderer(new OrthoRenderer3(this));
+        mGLSurfaceView.setRenderer(new ColorfulRenderer4(this));
         setContentView(mGLSurfaceView);
     }
 

@@ -29,7 +29,6 @@ public class OrthoRenderer3 implements Renderer {
             "{\n" +
             // 矩阵与向量相乘得到最终的位置
             "    gl_Position = u_Matrix * a_Position;\n" +
-            "    gl_PointSize = 40.0;\n" +
             "}";
     private static final String FRAGMENT_SHADER = "" +
             "precision mediump float;\n" +
