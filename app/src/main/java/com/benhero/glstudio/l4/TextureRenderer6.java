@@ -1,74 +1,77 @@
-package com.benhero.glstudio.l2;
+package com.benhero.glstudio.l4;
 
 import android.content.Context;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView.Renderer;
 import android.opengl.Matrix;
 
+import com.benhero.glstudio.R;
 import com.benhero.glstudio.util.LoggerConfig;
 import com.benhero.glstudio.util.ShaderHelper;
+import com.benhero.glstudio.util.TextureHelper;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
-import java.nio.ShortBuffer;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 /**
- * 索引绘制
+ * 纹理绘制
  *
  * @author benhero
  */
-public class IndexRenderer4 implements Renderer {
+public class TextureRenderer6 implements Renderer {
     private static final String VERTEX_SHADER = "" +
             "uniform mat4 u_Matrix;\n" +
             "attribute vec4 a_Position;\n" +
+            // 纹理坐标：2个分量，S和T坐标
+            "attribute vec2 a_texCoord;\n" +
+            "varying vec2 v_texCoord;\n" +
             "void main()\n" +
             "{\n" +
+            "    v_texCoord = a_texCoord;\n" +
             "    gl_Position = u_Matrix * a_Position;\n" +
             "}";
     private static final String FRAGMENT_SHADER = "" +
             "precision mediump float;\n" +
-            "uniform vec4 u_Color;\n" +
+            "varying vec2 v_texCoord;\n" +
+            // sampler2D：二维纹理数据的数组
+            "uniform sampler2D u_TextureUnit;\n" +
             "void main()\n" +
             "{\n" +
-            "    gl_FragColor = u_Color;\n" +
+            "    gl_FragColor = texture2D(u_TextureUnit, v_texCoord);\n" +
             "}";
-    private static final String U_COLOR = "u_Color";
     private static final String A_POSITION = "a_Position";
     private static final String U_MATRIX = "u_Matrix";
+    private static final String U_TEXTURE_UNIT = "u_TextureUnit";
+    private static final String A_TEX_COORD = "a_texCoord";
+
     private final Context mContext;
     private int mProgram;
     private final FloatBuffer mVertexData;
-    /**
-     * 顶点索引数据缓冲区：ShortBuff，占2位的Byte
-     */
-    private final ShortBuffer mVertexIndexBuffer;
-    private int uColorLocation;
-
     private int aPositionLocation;
+    private int uMatrixLocation;
+
+    /**
+     * 纹理坐标索引
+     */
+    private int aTexCoordLocation;
+    /**
+     *
+     */
+    private int uTextureUnitLocation;
+
     private static final float[] POINT_DATA = {
             -0.5f, -0.5f,
             -0.5f, 0.5f,
             0.5f, 0.5f,
             0.5f, -0.5f,
-            0f, -1.0f,
     };
-
-    /**
-     * 数组绘制的索引:当前是绘制三角形，所以是3个元素构成一个绘制顺序
-     */
-    private static final short[] VERTEX_INDEX = {
-            0, 1, 2,
-            0, 2, 3,
-            1, 2, 4};
-
     private static final int POSITION_COMPONENT_COUNT = 2;
     private static final int BYTES_PER_FLOAT = 4;
 
-    private int uMatrixLocation;
     private final float[] projectionMatrix = new float[]{
             1, 0, 0, 0,
             0, 1, 0, 0,
@@ -76,7 +79,26 @@ public class IndexRenderer4 implements Renderer {
             0, 0, 0, 1,
     };
 
-    public IndexRenderer4(Context context) {
+    /**
+     * 纹理坐标
+     */
+    private static final float[] TEX_VERTEX = {
+            0, 1,
+            0, 0,
+            1, 0,
+            1, 1,
+    };
+    /**
+     * 纹理坐标中每个点占的向量个数
+     */
+    private static final int TEX_VERTEX_COMPONENT_COUNT = 2;
+    private final FloatBuffer mTexVertexBuffer;
+    /**
+     * 纹理数据
+     */
+    private TextureHelper.TextureBean mTextureBean;
+
+    public TextureRenderer6(Context context) {
         mContext = context;
 
         mVertexData = ByteBuffer
@@ -85,16 +107,15 @@ public class IndexRenderer4 implements Renderer {
                 .asFloatBuffer()
                 .put(POINT_DATA);
 
-        mVertexIndexBuffer = ByteBuffer.allocateDirect(VERTEX_INDEX.length * 2)
+        mTexVertexBuffer = ByteBuffer.allocateDirect(TEX_VERTEX.length * 4)
                 .order(ByteOrder.nativeOrder())
-                .asShortBuffer()
-                .put(VERTEX_INDEX);
-        mVertexIndexBuffer.position(0);
+                .asFloatBuffer()
+                .put(TEX_VERTEX);
     }
 
     @Override
     public void onSurfaceCreated(GL10 glUnused, EGLConfig config) {
-        GLES20.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+        GLES20.glClearColor(0.9f, 0.9f, 0.9f, 1.0f);
         int vertexShader = ShaderHelper.compileVertexShader(VERTEX_SHADER);
         int fragmentShader = ShaderHelper.compileFragmentShader(FRAGMENT_SHADER);
 
@@ -106,21 +127,29 @@ public class IndexRenderer4 implements Renderer {
 
         GLES20.glUseProgram(mProgram);
 
-        uColorLocation = GLES20.glGetUniformLocation(mProgram, U_COLOR);
+        // 纹理数据
+        mTextureBean = TextureHelper.loadTexture(mContext, R.drawable.tuzki);
+
         aPositionLocation = GLES20.glGetAttribLocation(mProgram, A_POSITION);
         uMatrixLocation = GLES20.glGetUniformLocation(mProgram, U_MATRIX);
 
-        mVertexData.position(0);
-        GLES20.glVertexAttribPointer(aPositionLocation, POSITION_COMPONENT_COUNT, GLES20.GL_FLOAT,
-                false, 0, mVertexData);
+        // 纹理索引
+        aTexCoordLocation = GLES20.glGetAttribLocation(mProgram, A_TEX_COORD);
+        uTextureUnitLocation = GLES20.glGetUniformLocation(mProgram, U_TEXTURE_UNIT);
 
+        mVertexData.position(0);
+        GLES20.glVertexAttribPointer(aPositionLocation, POSITION_COMPONENT_COUNT, GLES20.GL_FLOAT, false, 0, mVertexData);
         GLES20.glEnableVertexAttribArray(aPositionLocation);
+
+        // 加载纹理坐标
+        mTexVertexBuffer.position(0);
+        GLES20.glVertexAttribPointer(aTexCoordLocation, TEX_VERTEX_COMPONENT_COUNT, GLES20.GL_FLOAT, false, 0, mTexVertexBuffer);
+        GLES20.glEnableVertexAttribArray(aTexCoordLocation);
     }
 
     @Override
     public void onSurfaceChanged(GL10 glUnused, int width, int height) {
         GLES20.glViewport(0, 0, width, height);
-
         final float aspectRatio = width > height ?
                 (float) width / (float) height :
                 (float) height / (float) width;
@@ -134,19 +163,23 @@ public class IndexRenderer4 implements Renderer {
     @Override
     public void onDrawFrame(GL10 glUnused) {
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
-        drawRectangle();
+        drawTexture();
     }
 
-    private void drawRectangle() {
-        GLES20.glUniform4f(uColorLocation, 0.0f, 0.0f, 1.0f, 1.0f);
+    private void drawTexture() {
         GLES20.glUniformMatrix4fv(uMatrixLocation, 1, false, projectionMatrix, 0);
 
-//        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_FAN, 0, POINT_DATA.length / POSITION_COMPONENT_COUNT);
-        // 绘制相对复杂的图形时，若顶点有较多重复时，对比数据占用空间而言，glDrawElements会比glDrawArrays小很多，也会更高效
-        // 因为在有重复顶点的情况下，glDrawArrays方式需要的3个顶点位置是用Float型的，占3*4的Byte值；
-        // 而glDrawElements需要3个Short型的，占3*2Byte值
-        // 1. 绘制模式； 2. 从数组中读取的数据长度； 3. 加载的数据格式； 4. 读取的数据缓冲区
-        GLES20.glDrawElements(GLES20.GL_TRIANGLES, VERTEX_INDEX.length,
-                GLES20.GL_UNSIGNED_SHORT, mVertexIndexBuffer);
+        // 纹理单元：在OpenGL中，纹理不是直接绘制到片段着色器上，而是通过纹理单元去保存纹理
+
+        // 设置当前活动的纹理单元为纹理单元0
+        GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
+
+        // 将纹理ID绑定到当前活动的纹理单元上
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mTextureBean.getTextureId());
+
+        // 将纹理单元传递片段着色器的u_TextureUnit
+        GLES20.glUniform1i(uTextureUnitLocation, 0);
+
+        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_FAN, 0, 4);
     }
 }
