@@ -24,6 +24,7 @@ public class TextureHelper {
 
     /**
      * 根据资源ID获取相应的OpenGL纹理ID，若加载失败则返回0
+     * <br>必须在GL线程中调用
      */
     public static TextureBean loadTexture(Context context, int resourceId) {
         TextureBean bean = new TextureBean();
