@@ -18,7 +18,7 @@ import javax.microedition.khronos.opengles.GL10;
 /**
  * 正交投影
  *
- * @author benhero
+ * @author Benhero
  */
 public class OrthoRenderer3 implements Renderer {
     private static final String VERTEX_SHADER = "" +

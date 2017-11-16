@@ -5,7 +5,7 @@ import android.content.Context;
 /**
  * 绘制计算工具类
  *
- * @author chenbenbin
+ * @author Benhero
  */
 public class DisplayUtil {
     /**

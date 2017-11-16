@@ -3,7 +3,7 @@ package com.benhero.glstudio.base;
 /**
  * OpenGL绘制图片对象
  *
- * @author chenbenbin
+ * @author Benhero
  */
 public class GLImageView extends GLObject {
     private int mTextureId;

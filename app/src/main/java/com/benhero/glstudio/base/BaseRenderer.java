@@ -12,11 +12,11 @@ import javax.microedition.khronos.opengles.GL10;
 /**
  * GL渲染基础类
  *
- * @author chenbenbin
+ * @author Benhero
  */
 public class BaseRenderer implements GLSurfaceView.Renderer {
     protected Context mContext;
-    protected List<GLImageView> mGLImageViews = new ArrayList<GLImageView>();
+    protected List<GLImageView> mGLImageViews = new ArrayList<>();
 
     public BaseRenderer(Context context) {
         mContext = context.getApplicationContext();

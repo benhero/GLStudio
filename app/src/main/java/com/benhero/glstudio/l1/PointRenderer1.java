@@ -25,7 +25,7 @@ import javax.microedition.khronos.opengles.GL10;
 /**
  * 基础概念 + 点 的绘制
  *
- * @author benhero
+ * @author Benhero
  */
 public class PointRenderer1 implements Renderer {
     //关键字 概念：

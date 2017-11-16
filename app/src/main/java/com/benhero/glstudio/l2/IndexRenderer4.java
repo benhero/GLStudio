@@ -19,7 +19,7 @@ import javax.microedition.khronos.opengles.GL10;
 /**
  * 索引绘制
  *
- * @author benhero
+ * @author Benhero
  */
 public class IndexRenderer4 implements Renderer {
     private static final String VERTEX_SHADER = "" +

@@ -25,7 +25,7 @@ import javax.microedition.khronos.opengles.GL10;
 /**
  * 图形
  *
- * @author benhero
+ * @author Benhero
  */
 public class ShapeRenderer2 implements Renderer {
     /**

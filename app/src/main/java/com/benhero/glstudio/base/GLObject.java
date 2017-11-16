@@ -3,7 +3,7 @@ package com.benhero.glstudio.base;
 /**
  * OpenGL绘制对象
  *
- * @author chenbenbin
+ * @author Benhero
  */
 public class GLObject {
     float mX;
@@ -16,6 +16,7 @@ public class GLObject {
     float mHeightGL;
     int mDegree;
     float mAlpha;
+    float[] mAlphas = new float[16];
 
     public float getX() {
         return mX;
@@ -94,6 +95,20 @@ public class GLObject {
     }
 
     public void setAlpha(float alpha) {
+        if (alpha < 0 || alpha > 1) {
+            throw new IllegalArgumentException("Alpha must between 0 to 1.");
+        }
         mAlpha = alpha;
+        for (int i = 0; i < mAlphas.length; i++) {
+            mAlphas[i] = alpha;
+        }
+    }
+
+    public float[] getAlphas() {
+        return mAlphas;
+    }
+
+    public void setAlphas(float[] alphas) {
+        mAlphas = alphas;
     }
 }

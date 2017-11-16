@@ -17,10 +17,12 @@ import java.nio.FloatBuffer;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
+import static com.benhero.glstudio.base.GLConstants.*;
+
 /**
  * 纹理绘制
  *
- * @author benhero
+ * @author Benhero
  */
 public class Architecture7 extends BaseRenderer {
     private static final String VERTEX_SHADER = "" +
@@ -29,44 +31,46 @@ public class Architecture7 extends BaseRenderer {
             // 纹理坐标：2个分量，S和T坐标
             "attribute vec2 a_texCoord;\n" +
             "varying vec2 v_texCoord;\n" +
+            "attribute vec4 a_color;\n" +
+            "varying vec4 v_color;\n" +
             "void main()\n" +
             "{\n" +
             "    v_texCoord = a_texCoord;\n" +
+            "    v_color = a_color;\n" +
             "    gl_Position = u_Matrix * a_Position;\n" +
             "}";
     private static final String FRAGMENT_SHADER = "" +
             "precision mediump float;\n" +
             "varying vec2 v_texCoord;\n" +
+            "varying vec4 v_color;\n" +
             // sampler2D：二维纹理数据的数组
             "uniform sampler2D u_TextureUnit;\n" +
             "void main()\n" +
             "{\n" +
-            "    gl_FragColor = texture2D(u_TextureUnit, v_texCoord);\n" +
+            "    gl_FragColor = v_color * texture2D(u_TextureUnit, v_texCoord);\n" +
             "}";
     private static final String A_POSITION = "a_Position";
     private static final String U_MATRIX = "u_Matrix";
     private static final String U_TEXTURE_UNIT = "u_TextureUnit";
     private static final String A_TEX_COORD = "a_texCoord";
+    private static final String A_COLOR = "a_color";
 
     private int mProgram;
     private final FloatBuffer mVertexData;
     private int aPositionLocation;
     private int uMatrixLocation;
+    private int aColorLocation;
 
     /**
      * 纹理坐标索引
      */
     private int aTexCoordLocation;
     /**
-     *
+     * 纹理裁剪范围索引
      */
     private int uTextureUnitLocation;
 
-    private static final int POSITION_COUNT = 4;
-    private static final int POSITION_COMPONENT_COUNT = 2;
-    private static final int BYTES_PER_FLOAT = 4;
-
-    private final float[] projectionMatrix = new float[]{
+    private final float[] mProjectionMatrix = new float[]{
             1, 0, 0, 0,
             0, 1, 0, 0,
             0, 0, 1, 0,
@@ -82,11 +86,9 @@ public class Architecture7 extends BaseRenderer {
             1, 1,
             0, 1,
     };
-    /**
-     * 纹理坐标中每个点占的向量个数
-     */
-    private static final int TEX_VERTEX_COMPONENT_COUNT = 2;
     private final FloatBuffer mTexVertexBuffer;
+
+    private FloatBuffer mColBuffer;
 
     public Architecture7(Context context) {
         super(context);
@@ -99,11 +101,15 @@ public class Architecture7 extends BaseRenderer {
                 .order(ByteOrder.nativeOrder())
                 .asFloatBuffer()
                 .put(TEX_VERTEX);
+
+        mColBuffer = ByteBuffer.allocateDirect(16 * 4)
+                .order(ByteOrder.nativeOrder())
+                .asFloatBuffer();
     }
 
     @Override
     public void onSurfaceCreated(GL10 glUnused, EGLConfig config) {
-        GLES20.glClearColor(0.9f, 0.9f, 0.9f, 1.0f);
+        GLES20.glClearColor(1, 1f, 1.0f, 1.0f);
         int vertexShader = ShaderHelper.compileVertexShader(VERTEX_SHADER);
         int fragmentShader = ShaderHelper.compileFragmentShader(FRAGMENT_SHADER);
 
@@ -118,6 +124,8 @@ public class Architecture7 extends BaseRenderer {
         aPositionLocation = GLES20.glGetAttribLocation(mProgram, A_POSITION);
         uMatrixLocation = GLES20.glGetUniformLocation(mProgram, U_MATRIX);
 
+        aColorLocation = GLES20.glGetAttribLocation(mProgram, A_COLOR);
+
         // 纹理索引
         aTexCoordLocation = GLES20.glGetAttribLocation(mProgram, A_TEX_COORD);
         uTextureUnitLocation = GLES20.glGetUniformLocation(mProgram, U_TEXTURE_UNIT);
@@ -126,16 +134,20 @@ public class Architecture7 extends BaseRenderer {
         GLES20.glVertexAttribPointer(aPositionLocation, POSITION_COMPONENT_COUNT, GLES20.GL_FLOAT, false, 0, mVertexData);
         GLES20.glEnableVertexAttribArray(aPositionLocation);
 
+        mColBuffer.position(0);
+        GLES20.glVertexAttribPointer(aColorLocation, COLOR_COMPONENT_COUNT, GLES20.GL_FLOAT, false, 0, mColBuffer);
+        GLES20.glEnableVertexAttribArray(aColorLocation);
+
         // 加载纹理坐标
         mTexVertexBuffer.position(0);
         GLES20.glVertexAttribPointer(aTexCoordLocation, TEX_VERTEX_COMPONENT_COUNT, GLES20.GL_FLOAT, false, 0, mTexVertexBuffer);
         GLES20.glEnableVertexAttribArray(aTexCoordLocation);
 
-        // 开启纹理透明混合，这样才能绘制透明图片
+        initTextureInfo();
+
+        // 开启纹理透明混合，这样才能绘制透明图片。使用这两句语句就可以在渲染时将PNG图片的背景透明化。注意PNG必须是32位的。如果不使用这两句，PNG图片则是显示黑色背景。
         GLES20.glEnable(GL10.GL_BLEND);
         GLES20.glBlendFunc(GL10.GL_ONE, GL10.GL_ONE_MINUS_SRC_ALPHA);
-
-        initTextureInfo();
     }
 
     private void initTextureInfo() {
@@ -164,7 +176,7 @@ public class Architecture7 extends BaseRenderer {
             aspectRatioX = 1;
             aspectRatioY = (float) height / (float) width;
         }
-        Matrix.orthoM(projectionMatrix, 0, -aspectRatioX, aspectRatioX, -aspectRatioY, aspectRatioY, -1f, 1f);
+        Matrix.orthoM(mProjectionMatrix, 0, -aspectRatioX, aspectRatioX, -aspectRatioY, aspectRatioY, -1f, 1f);
 
         for (GLImageView view : mGLImageViews) {
             // 坐标
@@ -189,8 +201,13 @@ public class Architecture7 extends BaseRenderer {
     private void drawTexture(GLImageView view) {
         mVertexData.clear();
         mVertexData.put(view.getPosition());
+        mVertexData.position(0);
 
-        GLES20.glUniformMatrix4fv(uMatrixLocation, 1, false, projectionMatrix, 0);
+        mColBuffer.clear();
+        mColBuffer.put(view.getAlphas());
+        mColBuffer.position(0);
+
+        GLES20.glUniformMatrix4fv(uMatrixLocation, 1, false, mProjectionMatrix, 0);
 
         // 纹理单元：在OpenGL中，纹理不是直接绘制到片段着色器上，而是通过纹理单元去保存纹理
 

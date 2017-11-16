@@ -18,7 +18,7 @@ import javax.microedition.khronos.opengles.GL10;
 /**
  * 渐变色
  *
- * @author benhero
+ * @author Benhero
  */
 public class ColorfulRenderer5 implements Renderer {
     private static final String VERTEX_SHADER = "" +
