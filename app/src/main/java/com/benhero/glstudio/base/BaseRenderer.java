@@ -18,6 +18,8 @@ public class BaseRenderer implements GLSurfaceView.Renderer {
     protected Context mContext;
     protected List<GLImageView> mGLImageViews = new ArrayList<>();
 
+    protected List<GLAnimation> mGLAnimations = new ArrayList<>();
+
     public BaseRenderer(Context context) {
         mContext = context.getApplicationContext();
     }

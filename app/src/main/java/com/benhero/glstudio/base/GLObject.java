@@ -18,6 +18,8 @@ public class GLObject {
     float mAlpha;
     float[] mAlphas = new float[16];
 
+    GLAnimation mGLAnimation;
+
     public float getX() {
         return mX;
     }
@@ -110,5 +112,13 @@ public class GLObject {
 
     public void setAlphas(float[] alphas) {
         mAlphas = alphas;
+    }
+
+    public GLAnimation getGLAnimation() {
+        return mGLAnimation;
+    }
+
+    public void setGLAnimation(GLAnimation GLAnimation) {
+        mGLAnimation = GLAnimation;
     }
 }

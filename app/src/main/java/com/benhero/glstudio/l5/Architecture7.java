@@ -3,9 +3,12 @@ package com.benhero.glstudio.l5;
 import android.content.Context;
 import android.opengl.GLES20;
 import android.opengl.Matrix;
+import android.util.Log;
 
 import com.benhero.glstudio.base.BaseRenderer;
+import com.benhero.glstudio.base.GLAnimation;
 import com.benhero.glstudio.base.GLImageView;
+import com.benhero.glstudio.base.GLTranslateAnimation;
 import com.benhero.glstudio.util.LoggerConfig;
 import com.benhero.glstudio.util.ShaderHelper;
 import com.benhero.glstudio.util.TextureHelper;
@@ -17,7 +20,12 @@ import java.nio.FloatBuffer;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-import static com.benhero.glstudio.base.GLConstants.*;
+import static com.benhero.glstudio.base.GLConstants.BYTES_PER_FLOAT;
+import static com.benhero.glstudio.base.GLConstants.COLOR_COMPONENT_COUNT;
+import static com.benhero.glstudio.base.GLConstants.COLOR_COUNT;
+import static com.benhero.glstudio.base.GLConstants.POSITION_COMPONENT_COUNT;
+import static com.benhero.glstudio.base.GLConstants.POSITION_COUNT;
+import static com.benhero.glstudio.base.GLConstants.TEX_VERTEX_COMPONENT_COUNT;
 
 /**
  * 纹理绘制
@@ -90,6 +98,13 @@ public class Architecture7 extends BaseRenderer {
 
     private FloatBuffer mColBuffer;
 
+    private long mStartTime;
+    private int mSurfaceWidth;
+    private int mSurfaceHeight;
+    private float mAspectRatioX;
+    private float mAspectRatioY;
+    private int mStandardSize;
+
     public Architecture7(Context context) {
         super(context);
         mVertexData = ByteBuffer
@@ -102,7 +117,7 @@ public class Architecture7 extends BaseRenderer {
                 .asFloatBuffer()
                 .put(TEX_VERTEX);
 
-        mColBuffer = ByteBuffer.allocateDirect(16 * 4)
+        mColBuffer = ByteBuffer.allocateDirect(COLOR_COUNT * 4)
                 .order(ByteOrder.nativeOrder())
                 .asFloatBuffer();
     }
@@ -148,6 +163,8 @@ public class Architecture7 extends BaseRenderer {
         // 开启纹理透明混合，这样才能绘制透明图片。使用这两句语句就可以在渲染时将PNG图片的背景透明化。注意PNG必须是32位的。如果不使用这两句，PNG图片则是显示黑色背景。
         GLES20.glEnable(GL10.GL_BLEND);
         GLES20.glBlendFunc(GL10.GL_ONE, GL10.GL_ONE_MINUS_SRC_ALPHA);
+
+        mStartTime = System.currentTimeMillis();
     }
 
     private void initTextureInfo() {
@@ -163,28 +180,31 @@ public class Architecture7 extends BaseRenderer {
     public void onSurfaceChanged(GL10 glUnused, int width, int height) {
         GLES20.glViewport(0, 0, width, height);
         // 比例：长：短
-        float aspectRatioX;
-        float aspectRatioY;
         // 换算成1.0f的基准边长
-        int standard;
         if (width > height) {
-            standard = height;
-            aspectRatioX = (float) width / (float) height;
-            aspectRatioY = 1;
+            mStandardSize = height;
+            mAspectRatioX = (float) width / (float) height;
+            mAspectRatioY = 1;
         } else {
-            standard = width;
-            aspectRatioX = 1;
-            aspectRatioY = (float) height / (float) width;
+            mStandardSize = width;
+            mAspectRatioX = 1;
+            mAspectRatioY = (float) height / (float) width;
         }
-        Matrix.orthoM(mProjectionMatrix, 0, -aspectRatioX, aspectRatioX, -aspectRatioY, aspectRatioY, -1f, 1f);
+        Matrix.orthoM(mProjectionMatrix, 0, -mAspectRatioX, mAspectRatioX, -mAspectRatioY, mAspectRatioY, -1f, 1f);
 
+        mSurfaceWidth = width;
+        mSurfaceHeight = height;
+        updatePosition();
+    }
+
+    private void updatePosition() {
         for (GLImageView view : mGLImageViews) {
             // 坐标
-            view.setXGL((view.getX() - width / 2) / (width / 2) * aspectRatioX);
-            view.setYGL((height - view.getY() * 2) / height * aspectRatioY);
+            view.setXGL((view.getX() - mSurfaceWidth / 2) / (mSurfaceWidth / 2) * mAspectRatioX);
+            view.setYGL((mSurfaceHeight - view.getY() * 2) / mSurfaceHeight * mAspectRatioY);
             // 宽高
-            view.setWidthGL(view.getWidth() / (standard / 2));
-            view.setHeightGL(view.getHeight() / (standard / 2));
+            view.setWidthGL(view.getWidth() / (mStandardSize / 2));
+            view.setHeightGL(view.getHeight() / (mStandardSize / 2));
             // 绘制范围
             view.updatePosition();
         }
@@ -203,6 +223,9 @@ public class Architecture7 extends BaseRenderer {
         mVertexData.put(view.getPosition());
         mVertexData.position(0);
 
+        if (view.getGLAnimation() != null) {
+            handleAnimation(view);
+        }
         mColBuffer.clear();
         mColBuffer.put(view.getAlphas());
         mColBuffer.position(0);
@@ -221,5 +244,31 @@ public class Architecture7 extends BaseRenderer {
         GLES20.glUniform1i(uTextureUnitLocation, 0);
 
         GLES20.glDrawArrays(GLES20.GL_TRIANGLE_FAN, 0, 4);
+    }
+
+    /**
+     * 处理动画
+     */
+    private void handleAnimation(GLImageView view) {
+        GLAnimation animation = view.getGLAnimation();
+        long now = System.currentTimeMillis();
+        if (animation.isInAnimationTime(now)) {
+            long runTime = now - animation.getStartTime();
+            float animationPercent = 1.0f * runTime / animation.getDuration();
+            if (animation instanceof GLTranslateAnimation) {
+                animationPercent = animation.getInterpolator().getInterpolation(animationPercent);
+                GLTranslateAnimation translate = (GLTranslateAnimation) animation;
+                float currentX = (translate.getToX() - translate.getFromX()) * animationPercent
+                        + translate.getFromX();
+                float currentY = (translate.getToY() - translate.getFromY()) * animationPercent
+                        + translate.getFromY();
+                view.setX(currentX);
+                view.setY(currentY);
+                updatePosition();
+                Log.i("JKL", "drawTexture: " + currentX + " : " + currentY);
+            }
+            // TODO: 17/11/17 根据起始、结束之间的透明度计算
+//                view.setAlpha(animationPercent);
+        }
     }
 }
