@@ -7,7 +7,9 @@ import android.view.animation.DecelerateInterpolator;
 
 import com.benhero.glstudio.base.BaseRenderer;
 import com.benhero.glstudio.base.GLAlphaAnimation;
+import com.benhero.glstudio.base.GLAnimationListener;
 import com.benhero.glstudio.base.GLImageView;
+import com.benhero.glstudio.base.GLScaleAnimation;
 import com.benhero.glstudio.base.GLTranslateAnimation;
 import com.benhero.glstudio.l5.Architecture7;
 
@@ -29,8 +31,8 @@ public class MainActivity extends AppCompatActivity {
         BaseRenderer renderer = new Architecture7(this);
         GLImageView imageView = new GLImageView();
         imageView.setResId(R.drawable.tuzki);
-        imageView.setX(300);
-        imageView.setY(1920);
+        imageView.setX(400);
+        imageView.setY(400);
         imageView.setAlpha(1f);
         renderer.addGLImageView(imageView);
 
@@ -39,30 +41,54 @@ public class MainActivity extends AppCompatActivity {
         imageView2.setX(200);
         imageView2.setY(1920);
         imageView2.setAlpha(1f);
-        renderer.addGLImageView(imageView2);
+//        renderer.addGLImageView(imageView2);
 
         GLAlphaAnimation alphaAnimation = new GLAlphaAnimation();
         alphaAnimation.setFromAlpha(0f);
         alphaAnimation.setToAlpha(1f);
-        alphaAnimation.setDuration(1000);
-        alphaAnimation.setStartTime(System.currentTimeMillis() + 1000);
-        alphaAnimation.setEndTime(System.currentTimeMillis() + 2000);
+        alphaAnimation.setDuration(3000);
+        alphaAnimation.setStartTime(System.currentTimeMillis());
+        alphaAnimation.setEndTime(System.currentTimeMillis() + 3000);
 
         GLTranslateAnimation translateAnimation = new GLTranslateAnimation();
-        translateAnimation.setDuration(1000);
-        translateAnimation.setFromX(200);
-        translateAnimation.setFromY(1620);
-        translateAnimation.setToX(200);
+        translateAnimation.setFromX(400);
+        translateAnimation.setFromY(400);
+        translateAnimation.setToX(0);
         translateAnimation.setToY(0);
-        translateAnimation.setDuration(2000);
-        translateAnimation.setStartTime(System.currentTimeMillis() + 1000);
-        translateAnimation.setEndTime(System.currentTimeMillis() + 3000);
+        translateAnimation.setDuration(5000);
+        translateAnimation.setStartTime(System.currentTimeMillis());
+        translateAnimation.setEndTime(System.currentTimeMillis() + 5000);
         translateAnimation.setInterpolator(new DecelerateInterpolator(2f));
 
-        imageView.setGLAnimation(translateAnimation);
-//        imageView2.setGLAnimation(alphaAnimation);
+        GLScaleAnimation scaleAnimation = new GLScaleAnimation();
+        scaleAnimation.setDuration(2000);
+        scaleAnimation.setToX(2.0f);
+        scaleAnimation.setToY(2.0f);
+        scaleAnimation.setInterpolator(new DecelerateInterpolator(2f));
+        scaleAnimation.setStartTime(System.currentTimeMillis());
+        scaleAnimation.setEndTime(System.currentTimeMillis() + 2000);
 
+        imageView2.setGLAnimation(alphaAnimation);
+        imageView.setGLAnimation(scaleAnimation);
+
+        renderer.setAnimationListener(new GLAnimationListener() {
+            @Override
+            public void onStart() {
+
+            }
+
+            @Override
+            public void onEnd() {
+
+            }
+
+            @Override
+            public void onProgress(float percent) {
+                mGLSurfaceView.requestRender();
+            }
+        });
         mGLSurfaceView.setRenderer(renderer);
+        mGLSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
         setContentView(mGLSurfaceView);
     }
 

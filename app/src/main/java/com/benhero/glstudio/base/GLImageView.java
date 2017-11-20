@@ -9,7 +9,35 @@ public class GLImageView extends GLObject {
     private int mTextureId;
     private int mResId;
 
-    private float[] mPosition = new float[8];
+    /**
+     * 4个顶点的坐标
+     */
+    private float[] mPosition = new float[]{
+            -0.5f, 0.5f,
+            0.5f, 0.5f,
+            0.5f, -0.5f,
+            -0.5f, -0.5f,
+    };
+
+    /**
+     * 坐标矩阵
+     */
+    private float[] mPositionMatrix = new float[]{
+            1, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, 1, 0,
+            0, 0, 0, 1,
+    };
+
+    /**
+     * 默认初始矩阵
+     */
+    private static final float[] DEFAULT_MATRIX = new float[]{
+            1, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, 1, 0,
+            0, 0, 0, 1,
+    };
 
     public float[] getPosition() {
         return mPosition;
@@ -27,15 +55,15 @@ public class GLImageView extends GLObject {
         mTextureId = textureId;
     }
 
-    public void updatePosition() {
-        mPosition[0] = mXGL;
-        mPosition[1] = mYGL;
-        mPosition[2] = mXGL + mWidthGL;
-        mPosition[3] = mYGL;
-        mPosition[4] = mXGL + mWidthGL;
-        mPosition[5] = mYGL - mHeightGL;
-        mPosition[6] = mXGL;
-        mPosition[7] = mYGL - mHeightGL;
+    /**
+     * 重置矩阵：每帧操作之前都需要进行重置
+     */
+    public void resetMatrix() {
+        System.arraycopy(DEFAULT_MATRIX, 0, mPositionMatrix, 0, mPositionMatrix.length);
+    }
+
+    public float[] getPositionMatrix() {
+        return mPositionMatrix;
     }
 
     public int getResId() {

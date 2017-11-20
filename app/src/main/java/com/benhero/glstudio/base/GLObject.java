@@ -98,7 +98,7 @@ public class GLObject {
 
     public void setAlpha(float alpha) {
         if (alpha < 0 || alpha > 1) {
-            throw new IllegalArgumentException("Alpha must between 0 to 1.");
+            throw new IllegalArgumentException("Alpha must between 0 to 1. Current value is " + alpha);
         }
         mAlpha = alpha;
         for (int i = 0; i < mAlphas.length; i++) {

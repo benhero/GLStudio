@@ -3,11 +3,12 @@ package com.benhero.glstudio.l5;
 import android.content.Context;
 import android.opengl.GLES20;
 import android.opengl.Matrix;
-import android.util.Log;
 
 import com.benhero.glstudio.base.BaseRenderer;
+import com.benhero.glstudio.base.GLAlphaAnimation;
 import com.benhero.glstudio.base.GLAnimation;
 import com.benhero.glstudio.base.GLImageView;
+import com.benhero.glstudio.base.GLScaleAnimation;
 import com.benhero.glstudio.base.GLTranslateAnimation;
 import com.benhero.glstudio.util.LoggerConfig;
 import com.benhero.glstudio.util.ShaderHelper;
@@ -35,6 +36,7 @@ import static com.benhero.glstudio.base.GLConstants.TEX_VERTEX_COMPONENT_COUNT;
 public class Architecture7 extends BaseRenderer {
     private static final String VERTEX_SHADER = "" +
             "uniform mat4 u_Matrix;\n" +
+            "uniform mat4 u_Position_Matrix;\n" +
             "attribute vec4 a_Position;\n" +
             // 纹理坐标：2个分量，S和T坐标
             "attribute vec2 a_texCoord;\n" +
@@ -45,7 +47,7 @@ public class Architecture7 extends BaseRenderer {
             "{\n" +
             "    v_texCoord = a_texCoord;\n" +
             "    v_color = a_color;\n" +
-            "    gl_Position = u_Matrix * a_Position;\n" +
+            "    gl_Position = u_Matrix * u_Position_Matrix * a_Position;\n" +
             "}";
     private static final String FRAGMENT_SHADER = "" +
             "precision mediump float;\n" +
@@ -59,6 +61,7 @@ public class Architecture7 extends BaseRenderer {
             "}";
     private static final String A_POSITION = "a_Position";
     private static final String U_MATRIX = "u_Matrix";
+    private static final String U_POSITION_MATRIX = "u_Position_Matrix";
     private static final String U_TEXTURE_UNIT = "u_TextureUnit";
     private static final String A_TEX_COORD = "a_texCoord";
     private static final String A_COLOR = "a_color";
@@ -68,6 +71,7 @@ public class Architecture7 extends BaseRenderer {
     private int aPositionLocation;
     private int uMatrixLocation;
     private int aColorLocation;
+    private int uPositionMatrixLocation;
 
     /**
      * 纹理坐标索引
@@ -124,7 +128,7 @@ public class Architecture7 extends BaseRenderer {
 
     @Override
     public void onSurfaceCreated(GL10 glUnused, EGLConfig config) {
-        GLES20.glClearColor(1, 1f, 1.0f, 1.0f);
+        GLES20.glClearColor(0.9f, 0.9f, 0.9f, 1.0f);
         int vertexShader = ShaderHelper.compileVertexShader(VERTEX_SHADER);
         int fragmentShader = ShaderHelper.compileFragmentShader(FRAGMENT_SHADER);
 
@@ -138,6 +142,7 @@ public class Architecture7 extends BaseRenderer {
 
         aPositionLocation = GLES20.glGetAttribLocation(mProgram, A_POSITION);
         uMatrixLocation = GLES20.glGetUniformLocation(mProgram, U_MATRIX);
+        uPositionMatrixLocation = GLES20.glGetUniformLocation(mProgram, U_POSITION_MATRIX);
 
         aColorLocation = GLES20.glGetAttribLocation(mProgram, A_COLOR);
 
@@ -200,14 +205,23 @@ public class Architecture7 extends BaseRenderer {
     private void updatePosition() {
         for (GLImageView view : mGLImageViews) {
             // 坐标
-            view.setXGL((view.getX() - mSurfaceWidth / 2) / (mSurfaceWidth / 2) * mAspectRatioX);
-            view.setYGL((mSurfaceHeight - view.getY() * 2) / mSurfaceHeight * mAspectRatioY);
+            view.setXGL(xPosExchange(view.getX()));
+            view.setYGL(yPosExchange(view.getY()));
             // 宽高
             view.setWidthGL(view.getWidth() / (mStandardSize / 2));
             view.setHeightGL(view.getHeight() / (mStandardSize / 2));
             // 绘制范围
-            view.updatePosition();
+            view.resetMatrix();
+            Matrix.scaleM(view.getPositionMatrix(), 0, view.getWidthGL(), view.getHeightGL(), 1);
         }
+    }
+
+    private float xPosExchange(float x) {
+        return (x - mSurfaceWidth / 2) / (mSurfaceWidth / 2) * mAspectRatioX;
+    }
+
+    private float yPosExchange(float y) {
+        return (mSurfaceHeight - y * 2) / mSurfaceHeight * mAspectRatioY;
     }
 
     @Override
@@ -232,6 +246,8 @@ public class Architecture7 extends BaseRenderer {
 
         GLES20.glUniformMatrix4fv(uMatrixLocation, 1, false, mProjectionMatrix, 0);
 
+        GLES20.glUniformMatrix4fv(uPositionMatrixLocation, 1, false, view.getPositionMatrix(), 0);
+
         // 纹理单元：在OpenGL中，纹理不是直接绘制到片段着色器上，而是通过纹理单元去保存纹理
 
         // 设置当前活动的纹理单元为纹理单元0
@@ -255,8 +271,8 @@ public class Architecture7 extends BaseRenderer {
         if (animation.isInAnimationTime(now)) {
             long runTime = now - animation.getStartTime();
             float animationPercent = 1.0f * runTime / animation.getDuration();
+            animationPercent = animation.getInterpolator().getInterpolation(animationPercent);
             if (animation instanceof GLTranslateAnimation) {
-                animationPercent = animation.getInterpolator().getInterpolation(animationPercent);
                 GLTranslateAnimation translate = (GLTranslateAnimation) animation;
                 float currentX = (translate.getToX() - translate.getFromX()) * animationPercent
                         + translate.getFromX();
@@ -264,11 +280,31 @@ public class Architecture7 extends BaseRenderer {
                         + translate.getFromY();
                 view.setX(currentX);
                 view.setY(currentY);
-                updatePosition();
-                Log.i("JKL", "drawTexture: " + currentX + " : " + currentY);
+
+                // 坐标
+                view.setXGL(xPosExchange(view.getX()));
+                view.setYGL(yPosExchange(view.getY()));
+                // 宽高
+                view.setWidthGL(view.getWidth() / (mStandardSize / 2));
+                view.setHeightGL(view.getHeight() / (mStandardSize / 2));
+                // 绘制范围
+                view.resetMatrix();
+                Matrix.translateM(view.getPositionMatrix(), 0, xPosExchange(currentX), yPosExchange(currentY), 0);
+                Matrix.scaleM(view.getPositionMatrix(), 0, view.getWidthGL(), view.getHeightGL(), 1);
+            } else if (animation instanceof GLScaleAnimation) {
+                GLScaleAnimation scale = (GLScaleAnimation) animation;
+                float currentX = (scale.getToX() - scale.getFromX()) * animationPercent + scale.getFromX();
+                float currentY = (scale.getToY() - scale.getFromY()) * animationPercent + scale.getFromY();
+                view.resetMatrix();
+                Matrix.translateM(view.getPositionMatrix(), 0, -0f, 0f, 0);
+                Matrix.scaleM(view.getPositionMatrix(), 0,
+                        view.getWidthGL() * currentX, view.getHeightGL() * currentY, 1);
+            } else if (animation instanceof GLAlphaAnimation) {
+                view.setAlpha(animationPercent);
             }
-            // TODO: 17/11/17 根据起始、结束之间的透明度计算
-//                view.setAlpha(animationPercent);
+            if (mAnimationListener != null) {
+                mAnimationListener.onProgress(animationPercent);
+            }
         }
     }
 }

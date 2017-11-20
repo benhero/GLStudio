@@ -1,6 +1,7 @@
 package com.benhero.glstudio.base;
 
 import android.view.animation.Interpolator;
+import android.view.animation.LinearInterpolator;
 
 /**
  * GL动画基类
@@ -8,12 +9,14 @@ import android.view.animation.Interpolator;
  * @author chenbenbin
  */
 public class GLAnimation {
+    // TODO: 17/11/20 解决 Start 、End、Duration冲突的问题
     protected long mStartTime;
     protected long mEndTime;
     protected long mDuration;
+
     protected boolean mIsStarted;
     protected boolean mIsEnd;
-    private Interpolator mInterpolator;
+    private Interpolator mInterpolator = new LinearInterpolator();
 
     public long getStartTime() {
         return mStartTime;

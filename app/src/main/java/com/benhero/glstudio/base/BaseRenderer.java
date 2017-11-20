@@ -20,6 +20,8 @@ public class BaseRenderer implements GLSurfaceView.Renderer {
 
     protected List<GLAnimation> mGLAnimations = new ArrayList<>();
 
+    protected GLAnimationListener mAnimationListener;
+
     public BaseRenderer(Context context) {
         mContext = context.getApplicationContext();
     }
@@ -45,5 +47,9 @@ public class BaseRenderer implements GLSurfaceView.Renderer {
     @Override
     public void onDrawFrame(GL10 gl) {
 
+    }
+
+    public void setAnimationListener(GLAnimationListener animationListener) {
+        mAnimationListener = animationListener;
     }
 }
