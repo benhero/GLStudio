@@ -8,6 +8,7 @@ import com.benhero.glstudio.base.BaseRenderer;
 import com.benhero.glstudio.base.GLAlphaAnimation;
 import com.benhero.glstudio.base.GLAnimation;
 import com.benhero.glstudio.base.GLImageView;
+import com.benhero.glstudio.base.GLRotateAnimation;
 import com.benhero.glstudio.base.GLScaleAnimation;
 import com.benhero.glstudio.base.GLTranslateAnimation;
 import com.benhero.glstudio.util.LoggerConfig;
@@ -301,6 +302,13 @@ public class Architecture7 extends BaseRenderer {
                         view.getWidthGL() * currentX, view.getHeightGL() * currentY, 1);
             } else if (animation instanceof GLAlphaAnimation) {
                 view.setAlpha(animationPercent);
+            } else if (animation instanceof GLRotateAnimation) {
+                GLRotateAnimation rotate = (GLRotateAnimation) animation;
+                float currentDegree = (rotate.getToDegrees() - rotate.getFromDegrees()) * animationPercent + rotate.getFromDegrees();
+                view.resetMatrix();
+                Matrix.translateM(view.getPositionMatrix(), 0, -0f, 1f, 0);
+                // (0,0,0) 与 (0,0,-1)作为旋转轴
+                Matrix.rotateM(view.getPositionMatrix(), 0, currentDegree, 0, 0, -1);
             }
             if (mAnimationListener != null) {
                 mAnimationListener.onProgress(animationPercent);

@@ -4,11 +4,13 @@ import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.animation.DecelerateInterpolator;
+import android.view.animation.OvershootInterpolator;
 
 import com.benhero.glstudio.base.BaseRenderer;
 import com.benhero.glstudio.base.GLAlphaAnimation;
 import com.benhero.glstudio.base.GLAnimationListener;
 import com.benhero.glstudio.base.GLImageView;
+import com.benhero.glstudio.base.GLRotateAnimation;
 import com.benhero.glstudio.base.GLScaleAnimation;
 import com.benhero.glstudio.base.GLTranslateAnimation;
 import com.benhero.glstudio.l5.Architecture7;
@@ -43,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
         imageView2.setAlpha(1f);
 //        renderer.addGLImageView(imageView2);
 
+        // 透明度
         GLAlphaAnimation alphaAnimation = new GLAlphaAnimation();
         alphaAnimation.setFromAlpha(0f);
         alphaAnimation.setToAlpha(1f);
@@ -50,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
         alphaAnimation.setStartTime(System.currentTimeMillis());
         alphaAnimation.setEndTime(System.currentTimeMillis() + 3000);
 
+        // 位移
         GLTranslateAnimation translateAnimation = new GLTranslateAnimation();
         translateAnimation.setFromX(400);
         translateAnimation.setFromY(400);
@@ -60,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
         translateAnimation.setEndTime(System.currentTimeMillis() + 5000);
         translateAnimation.setInterpolator(new DecelerateInterpolator(2f));
 
+        // 缩放
         GLScaleAnimation scaleAnimation = new GLScaleAnimation();
         scaleAnimation.setDuration(2000);
         scaleAnimation.setToX(2.0f);
@@ -68,8 +73,17 @@ public class MainActivity extends AppCompatActivity {
         scaleAnimation.setStartTime(System.currentTimeMillis());
         scaleAnimation.setEndTime(System.currentTimeMillis() + 2000);
 
+        // 旋转
+        GLRotateAnimation rotateAnimation = new GLRotateAnimation();
+        rotateAnimation.setFromDegrees(0);
+        rotateAnimation.setToDegrees(360);
+        rotateAnimation.setDuration(2000);
+        rotateAnimation.setInterpolator(new OvershootInterpolator());
+        rotateAnimation.setStartTime(System.currentTimeMillis());
+        rotateAnimation.setEndTime(System.currentTimeMillis() + 2000);
+
+        imageView.setGLAnimation(rotateAnimation);
         imageView2.setGLAnimation(alphaAnimation);
-        imageView.setGLAnimation(scaleAnimation);
 
         renderer.setAnimationListener(new GLAnimationListener() {
             @Override
