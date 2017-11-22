@@ -7,6 +7,7 @@ import android.opengl.Matrix;
 import com.benhero.glstudio.base.BaseRenderer;
 import com.benhero.glstudio.base.GLAlphaAnimation;
 import com.benhero.glstudio.base.GLAnimation;
+import com.benhero.glstudio.base.GLAnimationSet;
 import com.benhero.glstudio.base.GLImageView;
 import com.benhero.glstudio.base.GLRotateAnimation;
 import com.benhero.glstudio.base.GLScaleAnimation;
@@ -18,6 +19,7 @@ import com.benhero.glstudio.util.TextureHelper;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
+import java.util.List;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -238,8 +240,19 @@ public class Architecture7 extends BaseRenderer {
         mVertexData.put(view.getPosition());
         mVertexData.position(0);
 
-        if (view.getGLAnimation() != null) {
-            handleAnimation(view);
+        GLAnimation glAnimation = view.getGLAnimation();
+        if (glAnimation != null) {
+            if (glAnimation instanceof GLAnimationSet) {
+                GLAnimationSet glAnimationSet = (GLAnimationSet) glAnimation;
+                List<GLAnimation> animations = glAnimationSet.getAnimations();
+                view.resetMatrix();
+                for (GLAnimation animation : animations) {
+                    handleAnimation(view, animation);
+                }
+            } else {
+                view.resetMatrix();
+                handleAnimation(view, glAnimation);
+            }
         }
         mColBuffer.clear();
         mColBuffer.put(view.getAlphas());
@@ -266,13 +279,11 @@ public class Architecture7 extends BaseRenderer {
     /**
      * 处理动画
      */
-    private void handleAnimation(GLImageView view) {
-        GLAnimation animation = view.getGLAnimation();
+    private void handleAnimation(GLImageView view, GLAnimation animation) {
         long now = System.currentTimeMillis();
         if (animation.isInAnimationTime(now)) {
             long runTime = now - animation.getStartTime();
             float animationPercent = 1.0f * runTime / animation.getDuration();
-            animationPercent = animation.getInterpolator().getInterpolation(animationPercent);
             if (animation instanceof GLTranslateAnimation) {
                 GLTranslateAnimation translate = (GLTranslateAnimation) animation;
                 float currentX = (translate.getToX() - translate.getFromX()) * animationPercent
@@ -289,30 +300,26 @@ public class Architecture7 extends BaseRenderer {
                 view.setWidthGL(view.getWidth() / (mStandardSize / 2));
                 view.setHeightGL(view.getHeight() / (mStandardSize / 2));
                 // 绘制范围
-                view.resetMatrix();
                 Matrix.translateM(view.getPositionMatrix(), 0, xPosExchange(currentX), yPosExchange(currentY), 0);
-                Matrix.scaleM(view.getPositionMatrix(), 0, view.getWidthGL(), view.getHeightGL(), 1);
             } else if (animation instanceof GLScaleAnimation) {
                 GLScaleAnimation scale = (GLScaleAnimation) animation;
                 float currentX = (scale.getToX() - scale.getFromX()) * animationPercent + scale.getFromX();
                 float currentY = (scale.getToY() - scale.getFromY()) * animationPercent + scale.getFromY();
-                view.resetMatrix();
-                Matrix.translateM(view.getPositionMatrix(), 0, -0f, 0f, 0);
                 Matrix.scaleM(view.getPositionMatrix(), 0,
                         view.getWidthGL() * currentX, view.getHeightGL() * currentY, 1);
-            } else if (animation instanceof GLAlphaAnimation) {
-                view.setAlpha(animationPercent);
             } else if (animation instanceof GLRotateAnimation) {
                 GLRotateAnimation rotate = (GLRotateAnimation) animation;
                 float currentDegree = (rotate.getToDegrees() - rotate.getFromDegrees()) * animationPercent + rotate.getFromDegrees();
-                view.resetMatrix();
-                Matrix.translateM(view.getPositionMatrix(), 0, -0f, 1f, 0);
                 // (0,0,0) 与 (0,0,-1)作为旋转轴
-                Matrix.rotateM(view.getPositionMatrix(), 0, currentDegree, 0, 0, -1);
+                Matrix.rotateM(view.getPositionMatrix(), 0, currentDegree, 1, 1, -1);
+            } else if (animation instanceof GLAlphaAnimation) {
+                view.setAlpha(animationPercent);
             }
+            animationPercent = animation.getInterpolator().getInterpolation(animationPercent);
             if (mAnimationListener != null) {
                 mAnimationListener.onProgress(animationPercent);
             }
         }
     }
+
 }
