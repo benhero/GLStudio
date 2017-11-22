@@ -24,4 +24,10 @@ public class GLAlphaAnimation extends GLAnimation {
     public void setToAlpha(float toAlpha) {
         mToAlpha = toAlpha;
     }
+
+    @Override
+    protected void applyTransformation(float percent, GLObject object) {
+        super.applyTransformation(percent, object);
+        object.setAlpha(percent);
+    }
 }

@@ -3,6 +3,7 @@ package com.benhero.glstudio;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
 
@@ -50,10 +51,8 @@ public class MainActivity extends AppCompatActivity {
         GLAlphaAnimation alphaAnimation = new GLAlphaAnimation();
         alphaAnimation.setFromAlpha(0.5f);
         alphaAnimation.setToAlpha(1f);
-        alphaAnimation.setDuration(3000);
         alphaAnimation.setInterpolator(new DecelerateInterpolator());
-        alphaAnimation.setStartTime(System.currentTimeMillis());
-        alphaAnimation.setEndTime(System.currentTimeMillis() + 3000);
+        long now = System.currentTimeMillis();
 
         // 位移
         GLTranslateAnimation translateAnimation = new GLTranslateAnimation();
@@ -61,54 +60,52 @@ public class MainActivity extends AppCompatActivity {
         translateAnimation.setFromY(0);
         translateAnimation.setToX(500);
         translateAnimation.setToY(1400);
-        translateAnimation.setDuration(3000);
-        translateAnimation.setStartTime(System.currentTimeMillis());
-        translateAnimation.setEndTime(System.currentTimeMillis() + 3000);
         translateAnimation.setInterpolator(new DecelerateInterpolator(2f));
 
         // 缩放
         GLScaleAnimation scaleAnimation = new GLScaleAnimation();
-        scaleAnimation.setDuration(2000);
+        scaleAnimation.setFromX(0.5f);
+        scaleAnimation.setFromY(0.5f);
         scaleAnimation.setToX(2.0f);
         scaleAnimation.setToY(2.0f);
         scaleAnimation.setInterpolator(new DecelerateInterpolator(2f));
-        scaleAnimation.setStartTime(System.currentTimeMillis());
-        scaleAnimation.setEndTime(System.currentTimeMillis() + 2000);
 
         // 旋转
         GLRotateAnimation rotateAnimation = new GLRotateAnimation();
         rotateAnimation.setFromDegrees(0);
         rotateAnimation.setToDegrees(360);
-        rotateAnimation.setDuration(3000);
         rotateAnimation.setInterpolator(new OvershootInterpolator());
-        rotateAnimation.setStartTime(System.currentTimeMillis());
-        rotateAnimation.setEndTime(System.currentTimeMillis() + 3000);
 
         GLAnimationSet set = new GLAnimationSet();
         set.addAnimation(translateAnimation);
         set.addAnimation(rotateAnimation);
         set.addAnimation(alphaAnimation);
+        set.addAnimation(scaleAnimation);
         imageView.setGLAnimation(set);
-        imageView2.setGLAnimation(alphaAnimation);
 
-        renderer.setAnimationListener(new GLAnimationListener() {
+        set.setStartTime(now);
+        set.setDuration(3000);
+        set.setListener(new GLAnimationListener() {
             @Override
             public void onStart() {
-
+                Log.e("JKL", "onStart: ");
             }
 
             @Override
             public void onEnd() {
-
+                Log.e("JKL", "onEnd: ");
             }
 
             @Override
             public void onProgress(float percent) {
-                mGLSurfaceView.requestRender();
+                Log.i("JKL", "onProgress: " + percent);
             }
         });
+        imageView2.setGLAnimation(alphaAnimation);
+
+
         mGLSurfaceView.setRenderer(renderer);
-        mGLSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+//        mGLSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
         setContentView(mGLSurfaceView);
     }
 

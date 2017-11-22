@@ -5,12 +5,8 @@ import android.opengl.GLES20;
 import android.opengl.Matrix;
 
 import com.benhero.glstudio.base.BaseRenderer;
-import com.benhero.glstudio.base.GLAlphaAnimation;
 import com.benhero.glstudio.base.GLAnimation;
-import com.benhero.glstudio.base.GLAnimationSet;
 import com.benhero.glstudio.base.GLImageView;
-import com.benhero.glstudio.base.GLRotateAnimation;
-import com.benhero.glstudio.base.GLScaleAnimation;
 import com.benhero.glstudio.base.GLTranslateAnimation;
 import com.benhero.glstudio.util.LoggerConfig;
 import com.benhero.glstudio.util.ShaderHelper;
@@ -19,7 +15,6 @@ import com.benhero.glstudio.util.TextureHelper;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
-import java.util.List;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -208,22 +203,29 @@ public class Architecture7 extends BaseRenderer {
     private void updatePosition() {
         for (GLImageView view : mGLImageViews) {
             // 坐标
-            view.setXGL(xPosExchange(view.getX()));
-            view.setYGL(yPosExchange(view.getY()));
+            view.setXGL(xPositionToGL(view.getX()));
+            view.setYGL(yPositionToGL(view.getY()));
             // 宽高
             view.setWidthGL(view.getWidth() / (mStandardSize / 2));
             view.setHeightGL(view.getHeight() / (mStandardSize / 2));
             // 绘制范围
             view.resetMatrix();
             Matrix.scaleM(view.getPositionMatrix(), 0, view.getWidthGL(), view.getHeightGL(), 1);
+            view.initialize(mSurfaceWidth, mSurfaceHeight, mAspectRatioX, mAspectRatioY);
         }
     }
 
-    private float xPosExchange(float x) {
+    /**
+     * x坐标转换到GL坐标系上的位置
+     */
+    private float xPositionToGL(float x) {
         return (x - mSurfaceWidth / 2) / (mSurfaceWidth / 2) * mAspectRatioX;
     }
 
-    private float yPosExchange(float y) {
+    /**
+     * y坐标转换到GL坐标系上的位置
+     */
+    private float yPositionToGL(float y) {
         return (mSurfaceHeight - y * 2) / mSurfaceHeight * mAspectRatioY;
     }
 
@@ -242,17 +244,8 @@ public class Architecture7 extends BaseRenderer {
 
         GLAnimation glAnimation = view.getGLAnimation();
         if (glAnimation != null) {
-            if (glAnimation instanceof GLAnimationSet) {
-                GLAnimationSet glAnimationSet = (GLAnimationSet) glAnimation;
-                List<GLAnimation> animations = glAnimationSet.getAnimations();
-                view.resetMatrix();
-                for (GLAnimation animation : animations) {
-                    handleAnimation(view, animation);
-                }
-            } else {
-                view.resetMatrix();
-                handleAnimation(view, glAnimation);
-            }
+            view.resetMatrix();
+            handleAnimation(view, glAnimation);
         }
         mColBuffer.clear();
         mColBuffer.put(view.getAlphas());
@@ -260,7 +253,8 @@ public class Architecture7 extends BaseRenderer {
 
         GLES20.glUniformMatrix4fv(uMatrixLocation, 1, false, mProjectionMatrix, 0);
 
-        GLES20.glUniformMatrix4fv(uPositionMatrixLocation, 1, false, view.getPositionMatrix(), 0);
+        GLES20.glUniformMatrix4fv(uPositionMatrixLocation, 1, false,
+                view.getPositionMatrix(), 0);
 
         // 纹理单元：在OpenGL中，纹理不是直接绘制到片段着色器上，而是通过纹理单元去保存纹理
 
@@ -280,45 +274,17 @@ public class Architecture7 extends BaseRenderer {
      * 处理动画
      */
     private void handleAnimation(GLImageView view, GLAnimation animation) {
-        long now = System.currentTimeMillis();
-        if (animation.isInAnimationTime(now)) {
-            long runTime = now - animation.getStartTime();
-            float animationPercent = 1.0f * runTime / animation.getDuration();
-            if (animation instanceof GLTranslateAnimation) {
-                GLTranslateAnimation translate = (GLTranslateAnimation) animation;
-                float currentX = (translate.getToX() - translate.getFromX()) * animationPercent
-                        + translate.getFromX();
-                float currentY = (translate.getToY() - translate.getFromY()) * animationPercent
-                        + translate.getFromY();
-                view.setX(currentX);
-                view.setY(currentY);
-
-                // 坐标
-                view.setXGL(xPosExchange(view.getX()));
-                view.setYGL(yPosExchange(view.getY()));
-                // 宽高
-                view.setWidthGL(view.getWidth() / (mStandardSize / 2));
-                view.setHeightGL(view.getHeight() / (mStandardSize / 2));
-                // 绘制范围
-                Matrix.translateM(view.getPositionMatrix(), 0, xPosExchange(currentX), yPosExchange(currentY), 0);
-            } else if (animation instanceof GLScaleAnimation) {
-                GLScaleAnimation scale = (GLScaleAnimation) animation;
-                float currentX = (scale.getToX() - scale.getFromX()) * animationPercent + scale.getFromX();
-                float currentY = (scale.getToY() - scale.getFromY()) * animationPercent + scale.getFromY();
-                Matrix.scaleM(view.getPositionMatrix(), 0,
-                        view.getWidthGL() * currentX, view.getHeightGL() * currentY, 1);
-            } else if (animation instanceof GLRotateAnimation) {
-                GLRotateAnimation rotate = (GLRotateAnimation) animation;
-                float currentDegree = (rotate.getToDegrees() - rotate.getFromDegrees()) * animationPercent + rotate.getFromDegrees();
-                // (0,0,0) 与 (0,0,-1)作为旋转轴
-                Matrix.rotateM(view.getPositionMatrix(), 0, currentDegree, 1, 1, -1);
-            } else if (animation instanceof GLAlphaAnimation) {
-                view.setAlpha(animationPercent);
-            }
-            animationPercent = animation.getInterpolator().getInterpolation(animationPercent);
-            if (mAnimationListener != null) {
-                mAnimationListener.onProgress(animationPercent);
-            }
+        animation.getTransformation(System.currentTimeMillis(), view);
+        if (animation instanceof GLTranslateAnimation) {
+//                view.setX(currentX);
+//                view.setY(currentY);
+//
+//                // 坐标
+//                view.setXGL(xPositionToGL(view.getX()));
+//                view.setYGL(yPositionToGL(view.getY()));
+//                // 宽高
+//                view.setWidthGL(view.getWidth() / (mStandardSize / 2));
+//                view.setHeightGL(view.getHeight() / (mStandardSize / 2));
         }
     }
 

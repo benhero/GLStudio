@@ -1,5 +1,7 @@
 package com.benhero.glstudio.base;
 
+import android.opengl.Matrix;
+
 /**
  * GL缩放动画
  *
@@ -42,5 +44,14 @@ public class GLScaleAnimation extends GLAnimation {
 
     public void setToY(float toY) {
         mToY = toY;
+    }
+
+    @Override
+    protected void applyTransformation(float percent, GLObject object) {
+        super.applyTransformation(percent, object);
+        float currentX = (mToX - mFromX) * percent + mFromX;
+        float currentY = (mToY - mFromY) * percent + mFromY;
+        Matrix.scaleM(object.getPositionMatrix(), 0,
+                object.getWidthGL() * currentX, object.getHeightGL() * currentY, 1);
     }
 }

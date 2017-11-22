@@ -19,26 +19,6 @@ public class GLImageView extends GLObject {
             -0.5f, -0.5f,
     };
 
-    /**
-     * 坐标矩阵
-     */
-    private float[] mPositionMatrix = new float[]{
-            1, 0, 0, 0,
-            0, 1, 0, 0,
-            0, 0, 1, 0,
-            0, 0, 0, 1,
-    };
-
-    /**
-     * 默认初始矩阵
-     */
-    private static final float[] DEFAULT_MATRIX = new float[]{
-            1, 0, 0, 0,
-            0, 1, 0, 0,
-            0, 0, 1, 0,
-            0, 0, 0, 1,
-    };
-
     public float[] getPosition() {
         return mPosition;
     }
@@ -53,17 +33,6 @@ public class GLImageView extends GLObject {
 
     public void setTextureId(int textureId) {
         mTextureId = textureId;
-    }
-
-    /**
-     * 重置矩阵：每帧操作之前都需要进行重置
-     */
-    public void resetMatrix() {
-        System.arraycopy(DEFAULT_MATRIX, 0, mPositionMatrix, 0, mPositionMatrix.length);
-    }
-
-    public float[] getPositionMatrix() {
-        return mPositionMatrix;
     }
 
     public int getResId() {
