@@ -35,6 +35,20 @@ public class GLAnimationSet extends GLAnimation {
         }
     }
 
+    /**
+     * 根据子动画更新动画集合的时间
+     */
+    public void updateTimeByChildren() {
+        long startTime = 0;
+        long endTime = 0;
+        for (GLAnimation animation : mAnimations) {
+            startTime = Math.min(mStartTime, animation.mStartTime);
+            endTime = Math.max(animation.getStartTime() + animation.getDuration(), endTime);
+        }
+        mStartTime = startTime;
+        mDuration = endTime - startTime;
+    }
+
     @Override
     public boolean getTransformation(long currentTime, GLObject object) {
         boolean result = super.getTransformation(currentTime, object);
