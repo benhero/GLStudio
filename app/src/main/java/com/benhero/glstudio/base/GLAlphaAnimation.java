@@ -28,6 +28,6 @@ public class GLAlphaAnimation extends GLAnimation {
     @Override
     protected void applyTransformation(float percent, GLObject object) {
         super.applyTransformation(percent, object);
-        object.setAlpha(percent);
+        object.setAlpha(mFromAlpha + (mToAlpha - mFromAlpha) * percent);
     }
 }
