@@ -52,6 +52,6 @@ public class GLScaleAnimation extends GLAnimation {
         float currentX = (mToX - mFromX) * percent + mFromX;
         float currentY = (mToY - mFromY) * percent + mFromY;
         Matrix.scaleM(object.getPositionMatrix(), 0,
-                object.getWidthGL() * currentX, object.getHeightGL() * currentY, 1);
+                currentX, currentY, 1);
     }
 }

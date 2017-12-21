@@ -16,13 +16,26 @@ public class GLObject {
     float mHeightGL;
     int mDegree;
     float mAlpha;
-    float[] mAlphas = new float[16];
+    float[] mAlphas = new float[]{
+            1, 1, 1, 1,
+            1, 1, 1, 1,
+            1, 1, 1, 1,
+            1, 1, 1, 1
+    };
     int mParentWidth;
     int mParentHeight;
     float mAspectRatioX;
     float mAspectRatioY;
+    long mStartTime;
+    long mEndTime;
 
     GLAnimation mGLAnimation;
+
+    float mGravity = GRAVITY_NONE;
+    public static final int GRAVITY_NONE = 0;
+    public static final int GRAVITY_CENTER = 1;
+    public static final int GRAVITY_CENTER_VERTICAL = 2;
+    public static final int GRAVITY_CENTER_HORIZONTAL = 3;
 
     /**
      * 坐标矩阵
@@ -159,20 +172,34 @@ public class GLObject {
         mParentHeight = parentHeight;
         mAspectRatioX = aspectRatioX;
         mAspectRatioY = aspectRatioY;
+        if (mGravity == GRAVITY_CENTER) {
+            GLObjectUtils.setToCenter(this);
+        } else if (mGravity == GRAVITY_CENTER_HORIZONTAL) {
+            GLObjectUtils.setToCenterX(this);
+        } else if (mGravity == GRAVITY_CENTER_VERTICAL) {
+            GLObjectUtils.setToCenterY(this);
+        }
     }
 
     /**
      * x坐标转换到GL坐标系上的位置
      */
     public float xPositionToGL(float x) {
-        return (x - mParentWidth / 2) / (mParentWidth / 2) * mAspectRatioX;
+        return (x - mX) / (mParentWidth / 2.0f) * mAspectRatioX;
     }
 
     /**
      * y坐标转换到GL坐标系上的位置
      */
     public float yPositionToGL(float y) {
-        return (mParentHeight - y * 2) / mParentHeight * mAspectRatioY;
+        return (mY - y * 2.0f) / mParentHeight * mAspectRatioY;
+    }
+
+    /**
+     * x方向位移转换到GL坐标系上的位置
+     */
+    public float xTranslateToGL(float x) {
+        return (x - mParentWidth / 2) / (mParentWidth / 2) * mAspectRatioX;
     }
 
     public GLAnimation getGLAnimation() {
@@ -192,5 +219,29 @@ public class GLObject {
 
     public float[] getPositionMatrix() {
         return mPositionMatrix;
+    }
+
+    public long getStartTime() {
+        return mStartTime;
+    }
+
+    public void setStartTime(long startTime) {
+        mStartTime = startTime;
+    }
+
+    public long getEndTime() {
+        return mEndTime;
+    }
+
+    public void setEndTime(long endTime) {
+        mEndTime = endTime;
+    }
+
+    public float getGravity() {
+        return mGravity;
+    }
+
+    public void setGravity(float gravity) {
+        mGravity = gravity;
     }
 }

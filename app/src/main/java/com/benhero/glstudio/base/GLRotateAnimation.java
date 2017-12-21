@@ -32,6 +32,6 @@ public class GLRotateAnimation extends GLAnimation {
         super.applyTransformation(percent, object);
         float currentDegree = (mToDegrees - mFromDegrees) * percent + mFromDegrees;
         // (0,0,0) 与 (0,0,-1)作为旋转轴
-        Matrix.rotateM(object.getPositionMatrix(), 0, currentDegree, 1, 1, -1);
+        Matrix.rotateM(object.getPositionMatrix(), 0, currentDegree, 0, 0, -1);
     }
 }

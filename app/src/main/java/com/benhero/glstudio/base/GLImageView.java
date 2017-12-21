@@ -1,5 +1,7 @@
 package com.benhero.glstudio.base;
 
+import android.graphics.Bitmap;
+
 /**
  * OpenGL绘制图片对象
  *
@@ -8,6 +10,7 @@ package com.benhero.glstudio.base;
 public class GLImageView extends GLObject {
     private int mTextureId;
     private int mResId;
+    private Bitmap mBitmap;
 
     /**
      * 4个顶点的坐标
@@ -41,5 +44,13 @@ public class GLImageView extends GLObject {
 
     public void setResId(int resId) {
         mResId = resId;
+    }
+
+    public Bitmap getBitmap() {
+        return mBitmap;
+    }
+
+    public void setBitmap(Bitmap bitmap) {
+        mBitmap = bitmap;
     }
 }
