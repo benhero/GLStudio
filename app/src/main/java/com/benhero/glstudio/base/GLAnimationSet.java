@@ -57,4 +57,12 @@ public class GLAnimationSet extends GLAnimation {
         }
         return result;
     }
+
+    @Override
+    public void setFillAfter(boolean fillAfter) {
+        super.setFillAfter(fillAfter);
+        for (GLAnimation animation : mAnimations) {
+            animation.setFillAfter(fillAfter);
+        }
+    }
 }

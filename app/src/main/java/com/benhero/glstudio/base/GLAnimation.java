@@ -15,6 +15,12 @@ public class GLAnimation {
 
     protected boolean mIsStarted;
     protected boolean mIsEnd;
+
+    /**
+     * 动画结束后是否应用最后的效果
+     */
+    protected boolean mFillAfter = false;
+
     private Interpolator mInterpolator = new LinearInterpolator();
 
     protected GLAnimationListener mListener;
@@ -57,6 +63,14 @@ public class GLAnimation {
         return time >= mStartTime && time <= mEndTime;
     }
 
+    public boolean isFillAfter() {
+        return mFillAfter;
+    }
+
+    public void setFillAfter(boolean fillAfter) {
+        mFillAfter = fillAfter;
+    }
+
     public Interpolator getInterpolator() {
         return mInterpolator;
     }
@@ -82,6 +96,11 @@ public class GLAnimation {
                 // 动画刚刚结束
                 mIsEnd = true;
                 onAnimationEnd();
+            }
+            if (mFillAfter) {
+                // 动画结束后，任然使用动画最后的效果
+                applyTransformation(1, object);
+                onAnimationProgress(1);
             }
             return false;
         }
