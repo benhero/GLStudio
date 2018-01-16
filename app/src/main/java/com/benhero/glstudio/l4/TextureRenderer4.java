@@ -22,7 +22,7 @@ import javax.microedition.khronos.opengles.GL10;
  *
  * @author Benhero
  */
-public class TextureRenderer6 implements Renderer {
+public class TextureRenderer4 implements Renderer {
     private static final String VERTEX_SHADER = "" +
             "uniform mat4 u_Matrix;\n" +
             "attribute vec4 a_Position;\n" +
@@ -111,7 +111,7 @@ public class TextureRenderer6 implements Renderer {
      */
     private TextureHelper.TextureBean mTextureBean;
 
-    public TextureRenderer6(Context context) {
+    public TextureRenderer4(Context context) {
         mContext = context;
 
         mVertexData = ByteBuffer

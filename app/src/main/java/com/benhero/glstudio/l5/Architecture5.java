@@ -31,7 +31,7 @@ import static com.benhero.glstudio.base.GLConstants.TEX_VERTEX_COMPONENT_COUNT;
  *
  * @author Benhero
  */
-public class Architecture7 extends BaseRenderer {
+public class Architecture5 extends BaseRenderer {
     private static final String VERTEX_SHADER = "" +
             "uniform mat4 u_Matrix;\n" +
             "uniform mat4 u_Position_Matrix;\n" +
@@ -107,7 +107,7 @@ public class Architecture7 extends BaseRenderer {
     private float mAspectRatioY;
     private int mStandardSize;
 
-    public Architecture7(Context context) {
+    public Architecture5(Context context) {
         super(context);
         mVertexData = ByteBuffer
                 .allocateDirect(POSITION_COUNT * POSITION_COMPONENT_COUNT * BYTES_PER_FLOAT)

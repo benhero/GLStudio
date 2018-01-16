@@ -20,7 +20,7 @@ import javax.microedition.khronos.opengles.GL10;
  *
  * @author Benhero
  */
-public class OrthoRenderer3 implements Renderer {
+public class OrthoRenderer2_1 implements Renderer {
     private static final String VERTEX_SHADER = "" +
             // mat4：4×4的矩阵
             "uniform mat4 u_Matrix;\n" +
@@ -66,7 +66,7 @@ public class OrthoRenderer3 implements Renderer {
             0, 0, 0, 1,
     };
 
-    public OrthoRenderer3(Context context) {
+    public OrthoRenderer2_1(Context context) {
         mContext = context;
 
         mVertexData = ByteBuffer

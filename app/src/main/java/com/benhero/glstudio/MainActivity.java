@@ -15,7 +15,7 @@ import com.benhero.glstudio.base.GLImageView;
 import com.benhero.glstudio.base.GLRotateAnimation;
 import com.benhero.glstudio.base.GLScaleAnimation;
 import com.benhero.glstudio.base.GLTranslateAnimation;
-import com.benhero.glstudio.l5.Architecture7;
+import com.benhero.glstudio.l5.Architecture5;
 
 /**
  * 主界面
@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
         mGLSurfaceView = new GLSurfaceView(this);
         mGLSurfaceView.setEGLContextClientVersion(2);
         mGLSurfaceView.setEGLConfigChooser(false);
-        BaseRenderer renderer = new Architecture7(this);
+        BaseRenderer renderer = new Architecture5(this);
         GLImageView imageView = new GLImageView();
         imageView.setResId(R.drawable.tuzki);
         imageView.setX(400);
