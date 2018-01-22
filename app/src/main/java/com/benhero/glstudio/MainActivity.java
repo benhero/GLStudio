@@ -1,11 +1,16 @@
 package com.benhero.glstudio;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
+import android.widget.ImageView;
 
 import com.benhero.glstudio.base.BaseRenderer;
 import com.benhero.glstudio.base.GLAlphaAnimation;
@@ -15,23 +20,107 @@ import com.benhero.glstudio.base.GLImageView;
 import com.benhero.glstudio.base.GLRotateAnimation;
 import com.benhero.glstudio.base.GLScaleAnimation;
 import com.benhero.glstudio.base.GLTranslateAnimation;
+import com.benhero.glstudio.l4.TextureRenderer4;
 import com.benhero.glstudio.l5.Architecture5;
+import com.benhero.glstudio.l6.FBORenderer6;
+import com.jayfeng.lesscode.core.BitmapLess;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.ByteBuffer;
 
 /**
  * 主界面
  *
  * @author Benhero
  */
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private GLSurfaceView mGLSurfaceView;
+    private ImageView mImageView;
+    private FBORenderer6 mFboRenderer6;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mGLSurfaceView = new GLSurfaceView(this);
+        setContentView(R.layout.activity_main);
+
+        mGLSurfaceView = (GLSurfaceView) findViewById(R.id.main_gl_surface);
+        mImageView = (ImageView) findViewById(R.id.main_iv);
+        mImageView.setOnClickListener(this);
+
         mGLSurfaceView.setEGLContextClientVersion(2);
         mGLSurfaceView.setEGLConfigChooser(false);
+
+        GLSurfaceView.Renderer renderer = chooseLesson(FBORenderer6.class);
+        mGLSurfaceView.setRenderer(renderer);
+        mGLSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mGLSurfaceView.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mGLSurfaceView.onPause();
+    }
+
+    private GLSurfaceView.Renderer chooseLesson(Class<? extends GLSurfaceView.Renderer> className) {
+        if (className.equals(Architecture5.class)) {
+            return chooseArchitecture5();
+        } else if (className.equals(FBORenderer6.class)) {
+            return chooseFBO6();
+        } else if (className.equals(TextureRenderer4.class)) {
+            return new TextureRenderer4(this);
+        }
+        return null;
+    }
+
+    @NonNull
+    private FBORenderer6 chooseFBO6() {
+        if (mFboRenderer6 != null) {
+            return mFboRenderer6;
+        }
+        mFboRenderer6 = new FBORenderer6(this);
+        mFboRenderer6.setCallback(new FBORenderer6.Callback() {
+            @Override
+            public void onCall(ByteBuffer data) {
+                final Bitmap bitmap = Bitmap.createBitmap(mGLSurfaceView.getWidth(), mGLSurfaceView.getHeight(), Bitmap.Config.ARGB_8888);
+                Log.i("JKL", "MainActivity - onCall: " + data.capacity() + " : " + bitmap.getByteCount());
+                bitmap.copyPixelsFromBuffer(data);
+                final File destFile = new File("/sdcard/A/test"
+//                        + String.valueOf(System.currentTimeMillis())
+                        + ".jpg");
+                try {
+                    new File("/sdcard/A").mkdirs();
+                    destFile.createNewFile();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        BitmapLess.$save(bitmap, Bitmap.CompressFormat.JPEG, 100, destFile);
+                        mImageView.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                mImageView.setImageBitmap(BitmapFactory.decodeFile(destFile.getPath()));
+                            }
+                        });
+                    }
+                }).start();
+                data.clear();
+            }
+        });
+        return mFboRenderer6;
+    }
+
+    @NonNull
+    private BaseRenderer chooseArchitecture5() {
         BaseRenderer renderer = new Architecture5(this);
         GLImageView imageView = new GLImageView();
         imageView.setResId(R.drawable.tuzki);
@@ -102,22 +191,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         imageView2.setGLAnimation(alphaAnimation);
-
-
-        mGLSurfaceView.setRenderer(renderer);
-//        mGLSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
-        setContentView(mGLSurfaceView);
+        return renderer;
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        mGLSurfaceView.onResume();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        mGLSurfaceView.onPause();
+    public void onClick(View v) {
+        if (v.equals(mImageView)) {
+            mImageView.setImageResource(0);
+            mFboRenderer6.startRenderer();
+            mGLSurfaceView.requestRender();
+        }
     }
 }
