@@ -34,7 +34,7 @@ import java.nio.ByteBuffer;
  *
  * @author Benhero
  */
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity {
 
     private GLSurfaceView mGLSurfaceView;
     private ImageView mImageView;
@@ -47,7 +47,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         mGLSurfaceView = (GLSurfaceView) findViewById(R.id.main_gl_surface);
         mImageView = (ImageView) findViewById(R.id.main_iv);
-        mImageView.setOnClickListener(this);
 
         mGLSurfaceView.setEGLContextClientVersion(2);
         mGLSurfaceView.setEGLConfigChooser(false);
@@ -86,11 +85,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             return mFboRenderer6;
         }
         mFboRenderer6 = new FBORenderer6(this);
-        mFboRenderer6.setCallback(new FBORenderer6.Callback() {
+        mFboRenderer6.setCallback(new FBORenderer6.RendererCallback() {
             @Override
-            public void onCall(ByteBuffer data) {
-                final Bitmap bitmap = Bitmap.createBitmap(mGLSurfaceView.getWidth(), mGLSurfaceView.getHeight(), Bitmap.Config.ARGB_8888);
-                Log.i("JKL", "MainActivity - onCall: " + data.capacity() + " : " + bitmap.getByteCount());
+            public void onRendererDone(ByteBuffer data, int width, int height) {
+                final Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+                Log.i("JKL", "MainActivity - onRendererDone: " + data.capacity() + " : " + bitmap.getByteCount());
                 bitmap.copyPixelsFromBuffer(data);
                 final File destFile = new File("/sdcard/A/test"
 //                        + String.valueOf(System.currentTimeMillis())
@@ -114,6 +113,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }
                 }).start();
                 data.clear();
+            }
+        });
+
+        mImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mImageView.setImageResource(0);
+                mFboRenderer6.startRenderer();
+                mGLSurfaceView.requestRender();
             }
         });
         return mFboRenderer6;
@@ -192,14 +200,5 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
         imageView2.setGLAnimation(alphaAnimation);
         return renderer;
-    }
-
-    @Override
-    public void onClick(View v) {
-        if (v.equals(mImageView)) {
-            mImageView.setImageResource(0);
-            mFboRenderer6.startRenderer();
-            mGLSurfaceView.requestRender();
-        }
     }
 }
