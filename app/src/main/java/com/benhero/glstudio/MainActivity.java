@@ -8,9 +8,14 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 
 import com.benhero.glstudio.base.AnimationRenderer;
 import com.benhero.glstudio.base.GLAlphaAnimation;
@@ -20,9 +25,12 @@ import com.benhero.glstudio.base.GLImageView;
 import com.benhero.glstudio.base.GLRotateAnimation;
 import com.benhero.glstudio.base.GLScaleAnimation;
 import com.benhero.glstudio.base.GLTranslateAnimation;
+import com.benhero.glstudio.l1.PointRenderer1_1_1;
 import com.benhero.glstudio.l1.PointRenderer1_1_2;
 import com.benhero.glstudio.l1.ShapeRenderer1_2;
+import com.benhero.glstudio.l2.IndexRenderer2_2;
 import com.benhero.glstudio.l2.OrthoRenderer2_1;
+import com.benhero.glstudio.l3.ColorfulRenderer3;
 import com.benhero.glstudio.l4.TextureRenderer4;
 import com.benhero.glstudio.l5.Architecture5;
 import com.benhero.glstudio.l6.FBORenderer6;
@@ -37,68 +45,72 @@ import java.nio.ByteBuffer;
  *
  * @author Benhero
  */
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements AdapterView.OnItemClickListener {
 
+    private ViewGroup mRoot;
     private GLSurfaceView mGLSurfaceView;
-    private ImageView mImageView;
-    private FBORenderer6 mFboRenderer6;
+    private ListView mListView;
+    private ListAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mGLSurfaceView = (GLSurfaceView) findViewById(R.id.main_gl_surface);
-        mImageView = (ImageView) findViewById(R.id.main_iv);
+        mRoot = (ViewGroup) findViewById(R.id.main_root);
 
-        mGLSurfaceView.setEGLContextClientVersion(2);
-        mGLSurfaceView.setEGLConfigChooser(false);
-
-        GLSurfaceView.Renderer renderer = chooseLesson(PointRenderer1_1_2.class);
-        mGLSurfaceView.setRenderer(renderer);
-        mGLSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+        mListView = (ListView) findViewById(R.id.main_list);
+        mAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_list_item_1, android.R.id.text1, MainListItems.ITEMS);
+        mListView.setAdapter(mAdapter);
+        mListView.setOnItemClickListener(this);
+        // 自动点击
+//        int position = 0;
+//        mListView.performItemClick(mAdapter.getView(position, null, null),
+//                position, mAdapter.getItemId(position));
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        mGLSurfaceView.onResume();
+        if (mGLSurfaceView != null) {
+            mGLSurfaceView.onResume();
+        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        mGLSurfaceView.onPause();
+        if (mGLSurfaceView != null) {
+            mGLSurfaceView.onPause();
+        }
     }
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        overridePendingTransition(0, 0);
-    }
-
-    private GLSurfaceView.Renderer chooseLesson(Class<? extends GLSurfaceView.Renderer> className) {
-        if (className.equals(Architecture5.class)) {
-            return chooseArchitecture5();
-        } else if (className.equals(FBORenderer6.class)) {
-            return chooseFBO6();
-        } else if (className.equals(TextureRenderer4.class)) {
-            return new TextureRenderer4(this);
-        } else if (className.equals(ShapeRenderer1_2.class)) {
-            return new ShapeRenderer1_2(this);
-        } else if(className.equals(OrthoRenderer2_1.class)) {
-            return new OrthoRenderer2_1(this);
+        if (mGLSurfaceView != null) {
+            // 展示了GLSurfaceView，则删除ListView之外的其余控件
+            int childCount = mRoot.getChildCount();
+            for (int i = 0; i < childCount; i++) {
+                if (mRoot.getChildAt(i) != mListView) {
+                    mRoot.removeViewAt(i);
+                    childCount--;
+                    i--;
+                }
+            }
+            mGLSurfaceView = null;
+        } else {
+            super.onBackPressed();
         }
-        return new PointRenderer1_1_2(this);
     }
 
     @NonNull
     private FBORenderer6 chooseFBO6() {
-        if (mFboRenderer6 != null) {
-            return mFboRenderer6;
-        }
-        mFboRenderer6 = new FBORenderer6(this);
-        mFboRenderer6.setCallback(new FBORenderer6.RendererCallback() {
+        final ImageView imageView = new ImageView(this);
+        ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        mRoot.addView(imageView, params);
+        final FBORenderer6 renderer6 = new FBORenderer6(this);
+        renderer6.setCallback(new FBORenderer6.RendererCallback() {
             @Override
             public void onRendererDone(ByteBuffer data, int width, int height) {
                 final Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
@@ -117,10 +129,10 @@ public class MainActivity extends Activity {
                     @Override
                     public void run() {
                         BitmapLess.$save(bitmap, Bitmap.CompressFormat.JPEG, 100, destFile);
-                        mImageView.post(new Runnable() {
+                        imageView.post(new Runnable() {
                             @Override
                             public void run() {
-                                mImageView.setImageBitmap(BitmapFactory.decodeFile(destFile.getPath()));
+                                imageView.setImageBitmap(BitmapFactory.decodeFile(destFile.getPath()));
                             }
                         });
                     }
@@ -129,15 +141,14 @@ public class MainActivity extends Activity {
             }
         });
 
-        mImageView.setOnClickListener(new View.OnClickListener() {
+        imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mImageView.setImageResource(0);
-                mFboRenderer6.startRenderer();
+                renderer6.startRenderer();
                 mGLSurfaceView.requestRender();
             }
         });
-        return mFboRenderer6;
+        return renderer6;
     }
 
     @NonNull
@@ -209,9 +220,61 @@ public class MainActivity extends Activity {
             @Override
             public void onProgress(float percent) {
                 Log.i("JKL", "onProgress: " + percent);
+                mGLSurfaceView.requestRender();
             }
         });
         imageView2.setGLAnimation(alphaAnimation);
         return renderer;
     }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        mGLSurfaceView = new GLSurfaceView(this);
+        mRoot.addView(mGLSurfaceView);
+        mGLSurfaceView.setEGLContextClientVersion(2);
+        mGLSurfaceView.setEGLConfigChooser(false);
+
+        GLSurfaceView.Renderer renderer;
+        switch (position) {
+            case 1:
+                renderer = new PointRenderer1_1_2(this);
+                break;
+            case 2:
+                renderer = new ShapeRenderer1_2(this);
+                break;
+            case 3:
+                renderer = new OrthoRenderer2_1(this);
+                break;
+            case 4:
+                renderer = new IndexRenderer2_2(this);
+                break;
+            case 5:
+                renderer = new ColorfulRenderer3(this);
+                break;
+            case 6:
+                renderer = new TextureRenderer4(this);
+                break;
+            case 7:
+                renderer = chooseArchitecture5();
+                break;
+            case 8:
+                renderer = chooseFBO6();
+                break;
+            case 0:
+            default:
+                renderer = new PointRenderer1_1_1(this);
+                break;
+        }
+        mGLSurfaceView.setRenderer(renderer);
+        mGLSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+
+        mGLSurfaceView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+    }
+
+
 }
