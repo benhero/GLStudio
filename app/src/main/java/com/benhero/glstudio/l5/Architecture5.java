@@ -4,7 +4,7 @@ import android.content.Context;
 import android.opengl.GLES20;
 import android.opengl.Matrix;
 
-import com.benhero.glstudio.base.BaseRenderer;
+import com.benhero.glstudio.base.AnimationRenderer;
 import com.benhero.glstudio.base.GLAnimation;
 import com.benhero.glstudio.base.GLImageView;
 import com.benhero.glstudio.base.GLTranslateAnimation;
@@ -31,7 +31,7 @@ import static com.benhero.glstudio.base.GLConstants.TEX_VERTEX_COMPONENT_COUNT;
  *
  * @author Benhero
  */
-public class Architecture5 extends BaseRenderer {
+public class Architecture5 extends AnimationRenderer {
     private static final String VERTEX_SHADER = "" +
             "uniform mat4 u_Matrix;\n" +
             "uniform mat4 u_Position_Matrix;\n" +
