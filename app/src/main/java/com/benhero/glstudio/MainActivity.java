@@ -1,18 +1,18 @@
 package com.benhero.glstudio;
 
+import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
 import android.widget.ImageView;
 
-import com.benhero.glstudio.base.BaseRenderer;
+import com.benhero.glstudio.base.AnimationRenderer;
 import com.benhero.glstudio.base.GLAlphaAnimation;
 import com.benhero.glstudio.base.GLAnimationListener;
 import com.benhero.glstudio.base.GLAnimationSet;
@@ -20,6 +20,9 @@ import com.benhero.glstudio.base.GLImageView;
 import com.benhero.glstudio.base.GLRotateAnimation;
 import com.benhero.glstudio.base.GLScaleAnimation;
 import com.benhero.glstudio.base.GLTranslateAnimation;
+import com.benhero.glstudio.l1.PointRenderer1_1_2;
+import com.benhero.glstudio.l1.ShapeRenderer1_2;
+import com.benhero.glstudio.l2.OrthoRenderer2_1;
 import com.benhero.glstudio.l4.TextureRenderer4;
 import com.benhero.glstudio.l5.Architecture5;
 import com.benhero.glstudio.l6.FBORenderer6;
@@ -34,7 +37,7 @@ import java.nio.ByteBuffer;
  *
  * @author Benhero
  */
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends Activity {
 
     private GLSurfaceView mGLSurfaceView;
     private ImageView mImageView;
@@ -51,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
         mGLSurfaceView.setEGLContextClientVersion(2);
         mGLSurfaceView.setEGLConfigChooser(false);
 
-        GLSurfaceView.Renderer renderer = chooseLesson(FBORenderer6.class);
+        GLSurfaceView.Renderer renderer = chooseLesson(PointRenderer1_1_2.class);
         mGLSurfaceView.setRenderer(renderer);
         mGLSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
     }
@@ -68,6 +71,12 @@ public class MainActivity extends AppCompatActivity {
         mGLSurfaceView.onPause();
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(0, 0);
+    }
+
     private GLSurfaceView.Renderer chooseLesson(Class<? extends GLSurfaceView.Renderer> className) {
         if (className.equals(Architecture5.class)) {
             return chooseArchitecture5();
@@ -75,8 +84,12 @@ public class MainActivity extends AppCompatActivity {
             return chooseFBO6();
         } else if (className.equals(TextureRenderer4.class)) {
             return new TextureRenderer4(this);
+        } else if (className.equals(ShapeRenderer1_2.class)) {
+            return new ShapeRenderer1_2(this);
+        } else if(className.equals(OrthoRenderer2_1.class)) {
+            return new OrthoRenderer2_1(this);
         }
-        return null;
+        return new PointRenderer1_1_2(this);
     }
 
     @NonNull
@@ -128,8 +141,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @NonNull
-    private BaseRenderer chooseArchitecture5() {
-        BaseRenderer renderer = new Architecture5(this);
+    private GLSurfaceView.Renderer chooseArchitecture5() {
+        AnimationRenderer renderer = new Architecture5(this);
         GLImageView imageView = new GLImageView();
         imageView.setResId(R.drawable.tuzki);
         imageView.setX(400);

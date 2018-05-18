@@ -1,11 +1,3 @@
-/***
- * Excerpted from "OpenGL ES for Android",
- * published by The Pragmatic Bookshelf.
- * Copyrights apply to this code. It may not be used to create training material, 
- * courses, books, articles, and the like. Contact us if you are in doubt.
- * We make no guarantees that this code is fit for any purpose. 
- * Visit http://www.pragmaticprogrammer.com/titles/kbogla for more book information.
- ***/
 package com.benhero.glstudio.l1;
 
 import android.content.Context;
@@ -27,7 +19,7 @@ import javax.microedition.khronos.opengles.GL10;
  *
  * @author Benhero
  */
-public class PointRenderer1_1 implements Renderer {
+public class PointRenderer1_1_1 implements Renderer {
     //关键字 概念：
     // 1. uniform 由外部程序传递给 shader，就像是C语言里面的常量，shader 只能用，不能改；
     // 2. attribute 是只能在 vertex shader 中使用的变量；
@@ -90,7 +82,7 @@ public class PointRenderer1_1 implements Renderer {
      */
     private static final int BYTES_PER_FLOAT = 4;
 
-    public PointRenderer1_1(Context context) {
+    public PointRenderer1_1_1(Context context) {
         mContext = context;
 
         // 分配一个块Native内存，用于与GL通讯传递。(我们通常用的数据存在于Dalvik的内存中，1.无法访问硬件；2.会被垃圾回收)

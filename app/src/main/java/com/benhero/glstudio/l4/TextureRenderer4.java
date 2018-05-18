@@ -210,6 +210,5 @@ public class TextureRenderer4 implements Renderer {
         GLES20.glUniform1i(uTextureUnitLocation, 0);
 
         GLES20.glDrawArrays(GLES20.GL_TRIANGLE_FAN, 0, 4);
-
     }
 }
