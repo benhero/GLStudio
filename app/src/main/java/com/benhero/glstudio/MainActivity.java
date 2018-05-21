@@ -50,7 +50,6 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
     private ViewGroup mRoot;
     private GLSurfaceView mGLSurfaceView;
     private ListView mListView;
-    private ListAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,14 +59,14 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         mRoot = (ViewGroup) findViewById(R.id.main_root);
 
         mListView = (ListView) findViewById(R.id.main_list);
-        mAdapter = new ArrayAdapter<>(this,
+        ListAdapter adapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_list_item_1, android.R.id.text1, MainListItems.ITEMS);
-        mListView.setAdapter(mAdapter);
+        mListView.setAdapter(adapter);
         mListView.setOnItemClickListener(this);
         // 自动点击
-//        int position = 0;
-//        mListView.performItemClick(mAdapter.getView(position, null, null),
-//                position, mAdapter.getItemId(position));
+        int position = 2;
+        mListView.performItemClick(adapter.getView(position, null, null),
+                position, adapter.getItemId(position));
     }
 
     @Override
@@ -271,7 +270,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         mGLSurfaceView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                mGLSurfaceView.requestRender();
             }
         });
     }
