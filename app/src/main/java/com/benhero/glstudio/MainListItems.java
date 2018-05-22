@@ -5,7 +5,8 @@ import android.opengl.GLSurfaceView;
 
 import com.benhero.glstudio.l1.PointRenderer1_1_1;
 import com.benhero.glstudio.l1.PointRenderer1_1_2;
-import com.benhero.glstudio.l1.ShapeRenderer1_2;
+import com.benhero.glstudio.l1.ShapeRenderer1_2_1;
+import com.benhero.glstudio.l1.ShapeRenderer1_2_2;
 import com.benhero.glstudio.l2.IndexRenderer2_2;
 import com.benhero.glstudio.l2.OrthoRenderer2_1;
 import com.benhero.glstudio.l3.ColorfulRenderer3;
@@ -26,12 +27,13 @@ import java.util.Map;
  */
 public class MainListItems {
     public static List<Item> ITEMS = new ArrayList<>();
-    public static Map<Class, Item> ITEM_MAP = new HashMap<>();
+    private static Map<Class, Item> ITEM_MAP = new HashMap<>();
 
     static {
         addItem(new Item(PointRenderer1_1_1.class, "基础框架"));
         addItem(new Item(PointRenderer1_1_2.class, "Point的绘制"));
-        addItem(new Item(ShapeRenderer1_2.class, "基础图形绘制"));
+        addItem(new Item(ShapeRenderer1_2_1.class, "基础图形绘制 - 点、线、三角形"));
+        addItem(new Item(ShapeRenderer1_2_2.class, "基础图形绘制 - 多边形"));
         addItem(new Item(OrthoRenderer2_1.class, "正交投影变化"));
         addItem(new Item(IndexRenderer2_2.class, "索引的使用"));
         addItem(new Item(ColorfulRenderer3.class, "渐变色"));
