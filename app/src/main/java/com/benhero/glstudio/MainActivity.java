@@ -1,11 +1,11 @@
 package com.benhero.glstudio;
 
+import android.Manifest;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,8 +16,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
-import com.benhero.glstudio.base.AnimationRenderer;
 import com.benhero.glstudio.base.GLAlphaAnimation;
 import com.benhero.glstudio.base.GLAnimationListener;
 import com.benhero.glstudio.base.GLAnimationSet;
@@ -25,20 +25,16 @@ import com.benhero.glstudio.base.GLImageView;
 import com.benhero.glstudio.base.GLRotateAnimation;
 import com.benhero.glstudio.base.GLScaleAnimation;
 import com.benhero.glstudio.base.GLTranslateAnimation;
-import com.benhero.glstudio.l1.PointRenderer1_1_1;
-import com.benhero.glstudio.l1.PointRenderer1_1_2;
-import com.benhero.glstudio.l1.ShapeRenderer1_2;
-import com.benhero.glstudio.l2.IndexRenderer2_2;
-import com.benhero.glstudio.l2.OrthoRenderer2_1;
-import com.benhero.glstudio.l3.ColorfulRenderer3;
-import com.benhero.glstudio.l4.TextureRenderer4;
 import com.benhero.glstudio.l5.Architecture5;
 import com.benhero.glstudio.l6.FBORenderer6;
+import com.gun0912.tedpermission.PermissionListener;
+import com.gun0912.tedpermission.TedPermission;
 import com.jayfeng.lesscode.core.BitmapLess;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 
 /**
  * 主界面
@@ -63,10 +59,10 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
                 android.R.layout.simple_list_item_1, android.R.id.text1, MainListItems.ITEMS);
         mListView.setAdapter(adapter);
         mListView.setOnItemClickListener(this);
-        // 自动点击
-        int position = 2;
-        mListView.performItemClick(adapter.getView(position, null, null),
-                position, adapter.getItemId(position));
+//        // 自动点击
+//        int position = 2;
+//        mListView.performItemClick(adapter.getView(position, null, null),
+//                position, adapter.getItemId(position));
     }
 
     @Override
@@ -103,56 +99,38 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         }
     }
 
-    @NonNull
-    private FBORenderer6 chooseFBO6() {
-        final ImageView imageView = new ImageView(this);
-        ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        mRoot.addView(imageView, params);
-        final FBORenderer6 renderer6 = new FBORenderer6(this);
-        renderer6.setCallback(new FBORenderer6.RendererCallback() {
-            @Override
-            public void onRendererDone(ByteBuffer data, int width, int height) {
-                final Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-                Log.i("JKL", "MainActivity - onRendererDone: " + data.capacity() + " : " + bitmap.getByteCount());
-                bitmap.copyPixelsFromBuffer(data);
-                final File destFile = new File("/sdcard/A/test"
-//                        + String.valueOf(System.currentTimeMillis())
-                        + ".jpg");
-                try {
-                    new File("/sdcard/A").mkdirs();
-                    destFile.createNewFile();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        BitmapLess.$save(bitmap, Bitmap.CompressFormat.JPEG, 100, destFile);
-                        imageView.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                imageView.setImageBitmap(BitmapFactory.decodeFile(destFile.getPath()));
-                            }
-                        });
-                    }
-                }).start();
-                data.clear();
-            }
-        });
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        mGLSurfaceView = new GLSurfaceView(this);
+        mRoot.addView(mGLSurfaceView);
+        mGLSurfaceView.setEGLContextClientVersion(2);
+        mGLSurfaceView.setEGLConfigChooser(false);
 
-        imageView.setOnClickListener(new View.OnClickListener() {
+        Class clickClass = MainListItems.getClass(position);
+        GLSurfaceView.Renderer renderer = MainListItems.getRenderer(clickClass, this);
+        if (renderer == null) {
+            Toast.makeText(this, "反射构建渲染器失败", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (clickClass == Architecture5.class) {
+            chooseArchitecture5((Architecture5) renderer);
+        } else if (clickClass == FBORenderer6.class) {
+            chooseFBO6((FBORenderer6) renderer);
+        }
+
+        mGLSurfaceView.setRenderer(renderer);
+        mGLSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+
+        mGLSurfaceView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                renderer6.startRenderer();
                 mGLSurfaceView.requestRender();
             }
         });
-        return renderer6;
     }
 
-    @NonNull
-    private GLSurfaceView.Renderer chooseArchitecture5() {
-        AnimationRenderer renderer = new Architecture5(this);
+    private void chooseArchitecture5(Architecture5 renderer) {
         GLImageView imageView = new GLImageView();
         imageView.setResId(R.drawable.tuzki);
         imageView.setX(400);
@@ -223,57 +201,68 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
             }
         });
         imageView2.setGLAnimation(alphaAnimation);
-        return renderer;
     }
 
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        mGLSurfaceView = new GLSurfaceView(this);
-        mRoot.addView(mGLSurfaceView);
-        mGLSurfaceView.setEGLContextClientVersion(2);
-        mGLSurfaceView.setEGLConfigChooser(false);
+    private void chooseFBO6(final FBORenderer6 renderer) {
+        final ImageView imageView = new ImageView(this);
+        ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        mRoot.addView(imageView, params);
+        renderer.setCallback(new FBORenderer6.RendererCallback() {
+            @Override
+            public void onRendererDone(ByteBuffer data, int width, int height) {
+                final Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+                Log.i("JKL", "MainActivity - onRendererDone: " + data.capacity() + " : " + bitmap.getByteCount());
+                bitmap.copyPixelsFromBuffer(data);
+                final File destFile = new File("/sdcard/A/test"
+//                        + String.valueOf(System.currentTimeMillis())
+                        + ".jpg");
+                TedPermission.with(MainActivity.this)
+                        .setPermissionListener(mPermissionListener)
+                        .setDeniedMessage("If you reject permission,you can not use this service\n\nPlease turn on permissions at [Setting] > [Permission]")
+                        .setPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        .check();
+                try {
+                    new File("/sdcard/A").mkdirs();
+                    destFile.createNewFile();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        BitmapLess.$save(bitmap, Bitmap.CompressFormat.JPEG, 100, destFile);
+                        imageView.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                imageView.setImageBitmap(BitmapFactory.decodeFile(destFile.getPath()));
+                            }
+                        });
+                    }
+                }).start();
+                data.clear();
+            }
+        });
 
-        GLSurfaceView.Renderer renderer;
-        switch (position) {
-            case 1:
-                renderer = new PointRenderer1_1_2(this);
-                break;
-            case 2:
-                renderer = new ShapeRenderer1_2(this);
-                break;
-            case 3:
-                renderer = new OrthoRenderer2_1(this);
-                break;
-            case 4:
-                renderer = new IndexRenderer2_2(this);
-                break;
-            case 5:
-                renderer = new ColorfulRenderer3(this);
-                break;
-            case 6:
-                renderer = new TextureRenderer4(this);
-                break;
-            case 7:
-                renderer = chooseArchitecture5();
-                break;
-            case 8:
-                renderer = chooseFBO6();
-                break;
-            case 0:
-            default:
-                renderer = new PointRenderer1_1_1(this);
-                break;
-        }
-        mGLSurfaceView.setRenderer(renderer);
-        mGLSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
-
-        mGLSurfaceView.setOnClickListener(new View.OnClickListener() {
+        imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                renderer.startRenderer();
                 mGLSurfaceView.requestRender();
             }
         });
     }
 
+    PermissionListener mPermissionListener = new PermissionListener() {
+        @Override
+        public void onPermissionGranted() {
+            Toast.makeText(MainActivity.this, "Permission Granted", Toast.LENGTH_SHORT).show();
+        }
 
+        @Override
+        public void onPermissionDenied(ArrayList<String> deniedPermissions) {
+            Toast.makeText(MainActivity.this, "Permission Denied\n" + deniedPermissions.toString(), Toast.LENGTH_SHORT).show();
+        }
+
+
+    };
 }
