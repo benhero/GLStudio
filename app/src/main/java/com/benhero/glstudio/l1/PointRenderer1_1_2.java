@@ -66,7 +66,7 @@ public class PointRenderer1_1_2 extends BaseRenderer {
     public void onDrawFrame(GL10 glUnused) {
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
 
-        GLES20.glDrawArrays(GLES20.GL_POINTS, 0, 1);
         GLES20.glUniform4f(uColorLocation, 1.0f, 0f, 0f, 1.0f);
+        GLES20.glDrawArrays(GLES20.GL_POINTS, 0, 1);
     }
 }

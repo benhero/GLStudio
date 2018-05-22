@@ -122,7 +122,7 @@ public class ShapeRenderer1_2 extends BaseRenderer {
         // GL_TRIANGLES：每3个点构成一个三角形
         // GL_TRIANGLE_STRIP：相邻3个点构成一个三角形,不包括首位两个点
         // GL_TRIANGLE_FAN：第一个点和之后所有相邻的2个点构成一个三角形
-        GLES20.glUniform4f(uColorLocation, 0.0f, 0.0f, 1.0f, 1.0f);
+        GLES20.glUniform4f(uColorLocation, 1.0f, 1.0f, 0.0f, 1.0f);
         GLES20.glDrawArrays(GLES20.GL_TRIANGLE_FAN, 0, mDrawIndex);
     }
 }
