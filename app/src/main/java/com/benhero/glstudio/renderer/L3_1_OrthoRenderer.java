@@ -1,4 +1,4 @@
-package com.benhero.glstudio.l2;
+package com.benhero.glstudio.renderer;
 
 import android.content.Context;
 import android.opengl.GLES20;
@@ -20,7 +20,7 @@ import javax.microedition.khronos.opengles.GL10;
  *
  * @author Benhero
  */
-public class OrthoRenderer2_1 implements Renderer {
+public class L3_1_OrthoRenderer implements Renderer {
     private static final String VERTEX_SHADER = "" +
             // mat4：4×4的矩阵
             "uniform mat4 u_Matrix;\n" +
@@ -66,7 +66,7 @@ public class OrthoRenderer2_1 implements Renderer {
             0, 0, 0, 1,
     };
 
-    public OrthoRenderer2_1(Context context) {
+    public L3_1_OrthoRenderer(Context context) {
         mContext = context;
 
         mVertexData = ByteBuffer

@@ -6,7 +6,7 @@
  * We make no guarantees that this code is fit for any purpose. 
  * Visit http://www.pragmaticprogrammer.com/titles/kbogla for more book information.
  ***/
-package com.benhero.glstudio.l1;
+package com.benhero.glstudio.renderer;
 
 import android.content.Context;
 import android.opengl.GLES20;
@@ -20,11 +20,11 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 /**
- * 图形 - 多边形
+ * 图形
  *
  * @author Benhero
  */
-public class ShapeRenderer1_2_2 extends BaseRenderer {
+public class L2_1_ShapeRenderer extends BaseRenderer {
     /**
      * 顶点着色器：之后定义的每个都会传1次给顶点着色器
      */
@@ -33,7 +33,7 @@ public class ShapeRenderer1_2_2 extends BaseRenderer {
             "void main()\n" +
             "{\n" +
             "    gl_Position = a_Position;\n" +
-            "    gl_PointSize = 10.0;\n" +
+            "    gl_PointSize = 30.0;\n" +
             "}";
     /**
      * 片段着色器
@@ -47,25 +47,28 @@ public class ShapeRenderer1_2_2 extends BaseRenderer {
             "}";
     private static final String U_COLOR = "u_Color";
     private static final String A_POSITION = "a_Position";
-    private FloatBuffer mVertexData;
+    private final FloatBuffer mVertexData;
     private int uColorLocation;
     private int aPositionLocation;
+    /**
+     * 顶点数据数组
+     */
+    private static final float[] POINT_DATA = {
+            // 两个点的x,y坐标（x，y各占1个分量）
+            0f, 0f,
+            0, 0.5f,
+            -0.5f, 0f,
+            0f, 0f - 0.5f,
+            0.5f, 0f - 0.5f,
+            0.5f, 0.5f - 0.5f,
+    };
     private static final int POSITION_COMPONENT_COUNT = 2;
-    /**
-     * 多边形的顶点数，即边数
-     */
-    private int mPolygonVertexCount = 3;
-    /**
-     * 绘制所需要的顶点数
-     */
-    private float[] mPointData;
-    /**
-     * 多边形顶点与中心点的距离
-     */
-    private static final float RADIUS = 0.5f;
+    private static final int DRAW_COUNT = POINT_DATA.length / POSITION_COMPONENT_COUNT;
+    private int mDrawIndex = 0;
 
-    public ShapeRenderer1_2_2(Context context) {
+    public L2_1_ShapeRenderer(Context context) {
         super(context);
+        mVertexData = ByteBufferUtil.createFloatBuffer(POINT_DATA);
     }
 
     @Override
@@ -74,6 +77,10 @@ public class ShapeRenderer1_2_2 extends BaseRenderer {
 
         uColorLocation = getUniform(U_COLOR);
         aPositionLocation = getAttrib(A_POSITION);
+
+        mVertexData.position(0);
+        GLES20.glVertexAttribPointer(aPositionLocation, POSITION_COMPONENT_COUNT, GLES20.GL_FLOAT,
+                false, 0, mVertexData);
 
         GLES20.glEnableVertexAttribArray(aPositionLocation);
 
@@ -88,58 +95,34 @@ public class ShapeRenderer1_2_2 extends BaseRenderer {
     @Override
     public void onDrawFrame(GL10 glUnused) {
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
-        updateVertexData();
-        drawShape();
+        mDrawIndex++;
+        // 几何图形相关定义：http://wiki.jikexueyuan.com/project/opengl-es-guide/basic-geometry-definition.html
+        drawTriangle();
         drawLine();
         drawPoint();
-        updatePolygonVertexCount();
-    }
-
-    private void updateVertexData() {
-        // 边数+中心点+闭合点；一个点包含x、y两个向量
-        mPointData = new float[(mPolygonVertexCount + 2) * 2];
-
-        // 组成多边形的每个三角形的中心点角的弧度
-        float radian = (float) (2 * Math.PI / mPolygonVertexCount);
-        // 中心点
-        mPointData[0] = 0f;
-        mPointData[1] = 0f;
-        // 多边形的顶点数据
-        for (int i = 0; i < mPolygonVertexCount; i++) {
-            mPointData[2 * i + 2] = (float) (RADIUS * Math.cos(radian * i));
-            mPointData[2 * i + 1 + 2] = (float) (RADIUS * Math.sin(radian * i));
+        if (mDrawIndex >= DRAW_COUNT) {
+            mDrawIndex = 0;
         }
-        // 闭合点：与多边形的第一个顶点重叠
-        mPointData[mPolygonVertexCount * 2 + 2] = (float) (RADIUS * Math.cos(0));
-        mPointData[mPolygonVertexCount * 2 + 3] = (float) (RADIUS * Math.sin(0));
-
-        mVertexData = ByteBufferUtil.createFloatBuffer(mPointData);
-        mVertexData.position(0);
-        GLES20.glVertexAttribPointer(aPositionLocation, POSITION_COMPONENT_COUNT, GLES20.GL_FLOAT,
-                false, 0, mVertexData);
-    }
-
-
-    private void drawShape() {
-        GLES20.glUniform4f(uColorLocation, 1.0f, 1.0f, 0.0f, 1.0f);
-        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_FAN, 0, mPolygonVertexCount + 2);
     }
 
     private void drawPoint() {
         GLES20.glUniform4f(uColorLocation, 0.0f, 0.0f, 0.0f, 1.0f);
-        GLES20.glDrawArrays(GLES20.GL_POINTS, 0, mPolygonVertexCount + 2);
+        GLES20.glDrawArrays(GLES20.GL_POINTS, 0, mDrawIndex);
     }
 
     private void drawLine() {
+        // GL_LINES：每2个点构成一条线段
+        // GL_LINE_LOOP：按顺序将所有的点连接起来，包括首位相连
+        // GL_LINE_STRIP：按顺序将所有的点连接起来，不包括首位相连
         GLES20.glUniform4f(uColorLocation, 1.0f, 0.0f, 0.0f, 1.0f);
-        GLES20.glDrawArrays(GLES20.GL_LINE_LOOP, 1, mPolygonVertexCount);
+        GLES20.glDrawArrays(GLES20.GL_LINE_LOOP, 0, mDrawIndex);
     }
 
-    /**
-     * 更新多边形的边数
-     */
-    private void updatePolygonVertexCount() {
-        mPolygonVertexCount++;
-        mPolygonVertexCount = mPolygonVertexCount > 32 ? 3 : mPolygonVertexCount;
+    private void drawTriangle() {
+        // GL_TRIANGLES：每3个点构成一个三角形
+        // GL_TRIANGLE_STRIP：相邻3个点构成一个三角形,不包括首位两个点
+        // GL_TRIANGLE_FAN：第一个点和之后所有相邻的2个点构成一个三角形
+        GLES20.glUniform4f(uColorLocation, 1.0f, 1.0f, 0.0f, 1.0f);
+        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_FAN, 0, mDrawIndex);
     }
 }

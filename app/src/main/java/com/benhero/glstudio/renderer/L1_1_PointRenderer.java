@@ -1,4 +1,4 @@
-package com.benhero.glstudio.l1;
+package com.benhero.glstudio.renderer;
 
 import android.content.Context;
 import android.opengl.GLES20;
@@ -19,7 +19,7 @@ import javax.microedition.khronos.opengles.GL10;
  *
  * @author Benhero
  */
-public class PointRenderer1_1_1 implements Renderer {
+public class L1_1_PointRenderer implements Renderer {
     //关键字 概念：
     // 1. uniform 由外部程序传递给 shader，就像是C语言里面的常量，shader 只能用，不能改；
     // 2. attribute 是只能在 vertex shader 中使用的变量；
@@ -82,7 +82,7 @@ public class PointRenderer1_1_1 implements Renderer {
      */
     private static final int BYTES_PER_FLOAT = 4;
 
-    public PointRenderer1_1_1(Context context) {
+    public L1_1_PointRenderer(Context context) {
         mContext = context;
 
         // 分配一个块Native内存，用于与GL通讯传递。(我们通常用的数据存在于Dalvik的内存中，1.无法访问硬件；2.会被垃圾回收)

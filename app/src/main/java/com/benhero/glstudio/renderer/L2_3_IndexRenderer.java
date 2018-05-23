@@ -1,4 +1,4 @@
-package com.benhero.glstudio.l2;
+package com.benhero.glstudio.renderer;
 
 import android.content.Context;
 import android.opengl.GLES20;
@@ -21,7 +21,7 @@ import javax.microedition.khronos.opengles.GL10;
  *
  * @author Benhero
  */
-public class IndexRenderer2_2 implements Renderer {
+public class L2_3_IndexRenderer implements Renderer {
     private static final String VERTEX_SHADER = "" +
             "uniform mat4 u_Matrix;\n" +
             "attribute vec4 a_Position;\n" +
@@ -76,7 +76,7 @@ public class IndexRenderer2_2 implements Renderer {
             0, 0, 0, 1,
     };
 
-    public IndexRenderer2_2(Context context) {
+    public L2_3_IndexRenderer(Context context) {
         mContext = context;
 
         mVertexData = ByteBuffer

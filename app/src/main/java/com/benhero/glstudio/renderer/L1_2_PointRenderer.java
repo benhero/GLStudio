@@ -1,4 +1,4 @@
-package com.benhero.glstudio.l1;
+package com.benhero.glstudio.renderer;
 
 import android.content.Context;
 import android.opengl.GLES20;
@@ -16,7 +16,7 @@ import javax.microedition.khronos.opengles.GL10;
  *
  * @author Benhero
  */
-public class PointRenderer1_1_2 extends BaseRenderer {
+public class L1_2_PointRenderer extends BaseRenderer {
     private static final String VERTEX_SHADER = "" +
             "attribute vec4 a_Position;\n" +
             "void main()\n" +
@@ -38,7 +38,7 @@ public class PointRenderer1_1_2 extends BaseRenderer {
     };
     private static final int POSITION_COMPONENT_COUNT = 2;
 
-    public PointRenderer1_1_2(Context context) {
+    public L1_2_PointRenderer(Context context) {
         super(context);
         mVertexData = ByteBufferUtil.createFloatBuffer(POINT_DATA);
     }

@@ -25,8 +25,8 @@ import com.benhero.glstudio.base.GLImageView;
 import com.benhero.glstudio.base.GLRotateAnimation;
 import com.benhero.glstudio.base.GLScaleAnimation;
 import com.benhero.glstudio.base.GLTranslateAnimation;
-import com.benhero.glstudio.l5.Architecture5;
-import com.benhero.glstudio.l6.FBORenderer6;
+import com.benhero.glstudio.renderer.L6_Architecture;
+import com.benhero.glstudio.renderer.L7_FBORenderer;
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
 import com.jayfeng.lesscode.core.BitmapLess;
@@ -113,10 +113,10 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
             return;
         }
 
-        if (clickClass == Architecture5.class) {
-            chooseArchitecture5((Architecture5) renderer);
-        } else if (clickClass == FBORenderer6.class) {
-            chooseFBO6((FBORenderer6) renderer);
+        if (clickClass == L6_Architecture.class) {
+            chooseArchitecture5((L6_Architecture) renderer);
+        } else if (clickClass == L7_FBORenderer.class) {
+            chooseFBO6((L7_FBORenderer) renderer);
         }
 
         mGLSurfaceView.setRenderer(renderer);
@@ -130,7 +130,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         });
     }
 
-    private void chooseArchitecture5(Architecture5 renderer) {
+    private void chooseArchitecture5(L6_Architecture renderer) {
         GLImageView imageView = new GLImageView();
         imageView.setResId(R.drawable.tuzki);
         imageView.setX(400);
@@ -203,11 +203,11 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         imageView2.setGLAnimation(alphaAnimation);
     }
 
-    private void chooseFBO6(final FBORenderer6 renderer) {
+    private void chooseFBO6(final L7_FBORenderer renderer) {
         final ImageView imageView = new ImageView(this);
         ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         mRoot.addView(imageView, params);
-        renderer.setCallback(new FBORenderer6.RendererCallback() {
+        renderer.setCallback(new L7_FBORenderer.RendererCallback() {
             @Override
             public void onRendererDone(ByteBuffer data, int width, int height) {
                 final Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);

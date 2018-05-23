@@ -3,16 +3,16 @@ package com.benhero.glstudio;
 import android.content.Context;
 import android.opengl.GLSurfaceView;
 
-import com.benhero.glstudio.l1.PointRenderer1_1_1;
-import com.benhero.glstudio.l1.PointRenderer1_1_2;
-import com.benhero.glstudio.l1.ShapeRenderer1_2_1;
-import com.benhero.glstudio.l1.ShapeRenderer1_2_2;
-import com.benhero.glstudio.l2.IndexRenderer2_2;
-import com.benhero.glstudio.l2.OrthoRenderer2_1;
-import com.benhero.glstudio.l3.ColorfulRenderer3;
-import com.benhero.glstudio.l4.TextureRenderer4;
-import com.benhero.glstudio.l5.Architecture5;
-import com.benhero.glstudio.l6.FBORenderer6;
+import com.benhero.glstudio.renderer.L1_1_PointRenderer;
+import com.benhero.glstudio.renderer.L1_2_PointRenderer;
+import com.benhero.glstudio.renderer.L2_1_ShapeRenderer;
+import com.benhero.glstudio.renderer.L2_2_ShapeRenderer;
+import com.benhero.glstudio.renderer.L2_3_IndexRenderer;
+import com.benhero.glstudio.renderer.L3_1_OrthoRenderer;
+import com.benhero.glstudio.renderer.L4_ColorfulRenderer;
+import com.benhero.glstudio.renderer.L5_TextureRenderer;
+import com.benhero.glstudio.renderer.L6_Architecture;
+import com.benhero.glstudio.renderer.L7_FBORenderer;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -30,16 +30,16 @@ public class MainListItems {
     private static Map<Class, Item> ITEM_MAP = new HashMap<>();
 
     static {
-        addItem(new Item(PointRenderer1_1_1.class, "基础框架"));
-        addItem(new Item(PointRenderer1_1_2.class, "Point的绘制"));
-        addItem(new Item(ShapeRenderer1_2_1.class, "基础图形绘制 - 点、线、三角形"));
-        addItem(new Item(ShapeRenderer1_2_2.class, "基础图形绘制 - 多边形"));
-        addItem(new Item(OrthoRenderer2_1.class, "正交投影变化"));
-        addItem(new Item(IndexRenderer2_2.class, "索引的使用"));
-        addItem(new Item(ColorfulRenderer3.class, "渐变色"));
-        addItem(new Item(TextureRenderer4.class, "纹理渲染"));
-        addItem(new Item(Architecture5.class, "动画架构"));
-        addItem(new Item(FBORenderer6.class, "FrameBuffer"));
+        addItem(new Item(L1_1_PointRenderer.class, "基础框架"));
+        addItem(new Item(L1_2_PointRenderer.class, "Point的绘制"));
+        addItem(new Item(L2_1_ShapeRenderer.class, "基础图形绘制 - 点、线、三角形"));
+        addItem(new Item(L2_2_ShapeRenderer.class, "基础图形绘制 - 多边形"));
+        addItem(new Item(L3_1_OrthoRenderer.class, "正交投影变化"));
+        addItem(new Item(L2_3_IndexRenderer.class, "索引的使用"));
+        addItem(new Item(L4_ColorfulRenderer.class, "渐变色"));
+        addItem(new Item(L5_TextureRenderer.class, "纹理渲染"));
+        addItem(new Item(L6_Architecture.class, "动画架构"));
+        addItem(new Item(L7_FBORenderer.class, "FrameBuffer"));
     }
 
     /**

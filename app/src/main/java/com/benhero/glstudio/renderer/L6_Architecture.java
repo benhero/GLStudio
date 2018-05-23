@@ -1,4 +1,4 @@
-package com.benhero.glstudio.l5;
+package com.benhero.glstudio.renderer;
 
 import android.content.Context;
 import android.opengl.GLES20;
@@ -31,7 +31,7 @@ import static com.benhero.glstudio.base.GLConstants.TEX_VERTEX_COMPONENT_COUNT;
  *
  * @author Benhero
  */
-public class Architecture5 extends AnimationRenderer {
+public class L6_Architecture extends AnimationRenderer {
     private static final String VERTEX_SHADER = "" +
             "uniform mat4 u_Matrix;\n" +
             "uniform mat4 u_Position_Matrix;\n" +
@@ -107,7 +107,7 @@ public class Architecture5 extends AnimationRenderer {
     private float mAspectRatioY;
     private int mStandardSize;
 
-    public Architecture5(Context context) {
+    public L6_Architecture(Context context) {
         super(context);
         mVertexData = ByteBuffer
                 .allocateDirect(POSITION_COUNT * POSITION_COMPONENT_COUNT * BYTES_PER_FLOAT)
