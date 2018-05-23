@@ -60,7 +60,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         mListView.setAdapter(adapter);
         mListView.setOnItemClickListener(this);
         // 自动点击
-        int position = 3;
+        int position = 4;
         mListView.performItemClick(adapter.getView(position, null, null),
                 position, adapter.getItemId(position));
     }

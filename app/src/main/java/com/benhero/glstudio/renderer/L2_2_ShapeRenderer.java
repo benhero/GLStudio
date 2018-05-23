@@ -45,8 +45,6 @@ public class L2_2_ShapeRenderer extends BaseRenderer {
             "{\n" +
             "    gl_FragColor = u_Color;\n" +
             "}";
-    private static final String U_COLOR = "u_Color";
-    private static final String A_POSITION = "a_Position";
     private FloatBuffer mVertexData;
     private int uColorLocation;
     private int aPositionLocation;
@@ -68,12 +66,16 @@ public class L2_2_ShapeRenderer extends BaseRenderer {
         super(context);
     }
 
+    public String getVertexShader() {
+        return VERTEX_SHADER;
+    }
+
     @Override
     public void onSurfaceCreated(GL10 glUnused, EGLConfig config) {
-        makeProgram(VERTEX_SHADER, FRAGMENT_SHADER);
+        makeProgram(getVertexShader(), FRAGMENT_SHADER);
 
-        uColorLocation = getUniform(U_COLOR);
-        aPositionLocation = getAttrib(A_POSITION);
+        uColorLocation = getUniform("u_Color");
+        aPositionLocation = getAttrib("a_Position");
 
         GLES20.glEnableVertexAttribArray(aPositionLocation);
 
