@@ -61,6 +61,10 @@ public class L2_2_ShapeRenderer extends BaseRenderer {
      * 多边形顶点与中心点的距离
      */
     private static final float RADIUS = 0.5f;
+    /**
+     * 起始点的弧度
+     */
+    private static final float START_POINT_RADIAN = (float) (2 * Math.PI / 4);
 
     public L2_2_ShapeRenderer(Context context) {
         super(context);
@@ -108,12 +112,12 @@ public class L2_2_ShapeRenderer extends BaseRenderer {
         mPointData[1] = 0f;
         // 多边形的顶点数据
         for (int i = 0; i < mPolygonVertexCount; i++) {
-            mPointData[2 * i + 2] = (float) (RADIUS * Math.cos(radian * i));
-            mPointData[2 * i + 1 + 2] = (float) (RADIUS * Math.sin(radian * i));
+            mPointData[2 * i + 2] = (float) (RADIUS * Math.cos(radian * i + START_POINT_RADIAN));
+            mPointData[2 * i + 1 + 2] = (float) (RADIUS * Math.sin(radian * i + START_POINT_RADIAN));
         }
         // 闭合点：与多边形的第一个顶点重叠
-        mPointData[mPolygonVertexCount * 2 + 2] = (float) (RADIUS * Math.cos(0));
-        mPointData[mPolygonVertexCount * 2 + 3] = (float) (RADIUS * Math.sin(0));
+        mPointData[mPolygonVertexCount * 2 + 2] = (float) (RADIUS * Math.cos(START_POINT_RADIAN));
+        mPointData[mPolygonVertexCount * 2 + 3] = (float) (RADIUS * Math.sin(START_POINT_RADIAN));
 
         mVertexData = ByteBufferUtil.createFloatBuffer(mPointData);
         mVertexData.position(0);
