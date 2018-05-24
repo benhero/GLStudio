@@ -25,6 +25,7 @@ import com.benhero.glstudio.base.GLImageView;
 import com.benhero.glstudio.base.GLRotateAnimation;
 import com.benhero.glstudio.base.GLScaleAnimation;
 import com.benhero.glstudio.base.GLTranslateAnimation;
+import com.benhero.glstudio.renderer.L3_2_OrthoRenderer;
 import com.benhero.glstudio.renderer.L6_Architecture;
 import com.benhero.glstudio.renderer.L7_FBORenderer;
 import com.gun0912.tedpermission.PermissionListener;
@@ -60,7 +61,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         mListView.setAdapter(adapter);
         mListView.setOnItemClickListener(this);
         // 自动点击
-        int position = 4;
+        int position = MainListItems.getIndex(L3_2_OrthoRenderer.class);
         mListView.performItemClick(adapter.getView(position, null, null),
                 position, adapter.getItemId(position));
     }

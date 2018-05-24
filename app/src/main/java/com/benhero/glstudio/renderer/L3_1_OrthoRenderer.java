@@ -28,7 +28,7 @@ public class L3_1_OrthoRenderer extends L2_2_ShapeRenderer {
     /**
      * 矩阵数组
      */
-    private final float[] projectionMatrix = new float[]{
+    private final float[] mProjectionMatrix = new float[]{
             1, 0, 0, 0,
             0, 1, 0, 0,
             0, 0, 1, 0,
@@ -68,12 +68,12 @@ public class L3_1_OrthoRenderer extends L2_2_ShapeRenderer {
         // 8. far：z的最大值
         if (width > height) {
             // 横屏
-            Matrix.orthoM(projectionMatrix, 0, -aspectRatio, aspectRatio, -1f, 1f, -1f, 1f);
+            Matrix.orthoM(mProjectionMatrix, 0, -aspectRatio, aspectRatio, -1f, 1f, -1f, 1f);
         } else {
             // 竖屏or正方形
-            Matrix.orthoM(projectionMatrix, 0, -1f, 1f, -aspectRatio, aspectRatio, -1f, 1f);
+            Matrix.orthoM(mProjectionMatrix, 0, -1f, 1f, -aspectRatio, aspectRatio, -1f, 1f);
         }
         // 更新u_Matrix的值，即更新矩阵数组
-        GLES20.glUniformMatrix4fv(uMatrixLocation, 1, false, projectionMatrix, 0);
+        GLES20.glUniformMatrix4fv(uMatrixLocation, 1, false, mProjectionMatrix, 0);
     }
 }

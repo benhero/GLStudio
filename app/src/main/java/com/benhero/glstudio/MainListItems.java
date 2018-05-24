@@ -9,6 +9,7 @@ import com.benhero.glstudio.renderer.L2_1_ShapeRenderer;
 import com.benhero.glstudio.renderer.L2_2_ShapeRenderer;
 import com.benhero.glstudio.renderer.L2_3_IndexRenderer;
 import com.benhero.glstudio.renderer.L3_1_OrthoRenderer;
+import com.benhero.glstudio.renderer.L3_2_OrthoRenderer;
 import com.benhero.glstudio.renderer.L4_ColorfulRenderer;
 import com.benhero.glstudio.renderer.L5_TextureRenderer;
 import com.benhero.glstudio.renderer.L6_Architecture;
@@ -35,8 +36,9 @@ public class MainListItems {
         addItem(new Item(L2_1_ShapeRenderer.class, "基础图形绘制 - 点、线、三角形"));
         addItem(new Item(L2_2_ShapeRenderer.class, "基础图形绘制 - 多边形"));
         addItem(new Item(L3_1_OrthoRenderer.class, "正交投影变化"));
-        addItem(new Item(L2_3_IndexRenderer.class, "索引的使用"));
+        addItem(new Item(L3_2_OrthoRenderer.class, "正交投影变化 - 代码封装"));
         addItem(new Item(L4_ColorfulRenderer.class, "渐变色"));
+        addItem(new Item(L2_3_IndexRenderer.class, "索引的使用"));
         addItem(new Item(L5_TextureRenderer.class, "纹理渲染"));
         addItem(new Item(L6_Architecture.class, "动画架构"));
         addItem(new Item(L7_FBORenderer.class, "FrameBuffer"));
