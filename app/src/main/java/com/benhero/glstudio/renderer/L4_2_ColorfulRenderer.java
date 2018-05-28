@@ -2,14 +2,11 @@ package com.benhero.glstudio.renderer;
 
 import android.content.Context;
 import android.opengl.GLES20;
-import android.opengl.GLSurfaceView.Renderer;
-import android.opengl.Matrix;
 
-import com.benhero.glstudio.util.LoggerConfig;
-import com.benhero.glstudio.util.ShaderHelper;
+import com.benhero.glstudio.base.BaseRenderer;
+import com.benhero.glstudio.util.ByteBufferUtil;
+import com.benhero.glstudio.util.ProjectionMatrixHelper;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
 import javax.microedition.khronos.egl.EGLConfig;
@@ -20,7 +17,7 @@ import javax.microedition.khronos.opengles.GL10;
  *
  * @author Benhero
  */
-public class L4_ColorfulRenderer implements Renderer {
+public class L4_2_ColorfulRenderer extends BaseRenderer {
     private static final String VERTEX_SHADER = "" +
             "uniform mat4 u_Matrix;\n" +
             "attribute vec4 a_Position;\n" +
@@ -32,6 +29,7 @@ public class L4_ColorfulRenderer implements Renderer {
             "void main()\n" +
             "{\n" +
             "    v_Color = a_Color;\n" +
+            "    gl_PointSize = 30.0;\n" +
             "    gl_Position = u_Matrix * a_Position;\n" +
             "}";
     private static final String FRAGMENT_SHADER = "" +
@@ -42,18 +40,12 @@ public class L4_ColorfulRenderer implements Renderer {
             "{\n" +
             "    gl_FragColor = v_Color;\n" +
             "}";
-    private static final String A_POSITION = "a_Position";
-    private static final String U_MATRIX = "u_Matrix";
-    private static final String A_COLOR = "a_Color";
-    private final Context mContext;
-    private int mProgram;
     private final FloatBuffer mVertexData;
-    private int aColorLocation;
-    private int aPositionLocation;
+    private ProjectionMatrixHelper mProjectionMatrixHelper;
 
     private static final float[] POINT_DATA = {
             // 一个顶点有5个向量数据：x、y、r、g、b
-            -0.5f, -0.5f, 1f, 1f, 1f,
+            -0.5f, -0.5f, 1f, 0.5f, 0.5f,
             0.5f, -0.5f, 1f, 0f, 1f,
             -0.5f, 0.5f, 0f, 1f, 1f,
             0.5f, 0.5f, 1f, 1f, 0f,
@@ -74,42 +66,19 @@ public class L4_ColorfulRenderer implements Renderer {
     private static final int STRIDE =
             (POSITION_COMPONENT_COUNT + COLOR_COMPONENT_COUNT) * BYTES_PER_FLOAT;
 
-    private int uMatrixLocation;
-    private final float[] projectionMatrix = new float[]{
-            1, 0, 0, 0,
-            0, 1, 0, 0,
-            0, 0, 1, 0,
-            0, 0, 0, 1,
-    };
-
-    public L4_ColorfulRenderer(Context context) {
-        mContext = context;
-
-        mVertexData = ByteBuffer
-                .allocateDirect(POINT_DATA.length * BYTES_PER_FLOAT)
-                .order(ByteOrder.nativeOrder())
-                .asFloatBuffer();
-
-        mVertexData.put(POINT_DATA);
+    public L4_2_ColorfulRenderer(Context context) {
+        super(context);
+        mVertexData = ByteBufferUtil.createFloatBuffer(POINT_DATA);
     }
 
     @Override
     public void onSurfaceCreated(GL10 glUnused, EGLConfig config) {
         GLES20.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-        int vertexShader = ShaderHelper.compileVertexShader(VERTEX_SHADER);
-        int fragmentShader = ShaderHelper.compileFragmentShader(FRAGMENT_SHADER);
+        makeProgram(VERTEX_SHADER, FRAGMENT_SHADER);
 
-        mProgram = ShaderHelper.linkProgram(vertexShader, fragmentShader);
-
-        if (LoggerConfig.ON) {
-            ShaderHelper.validateProgram(mProgram);
-        }
-
-        GLES20.glUseProgram(mProgram);
-
-        aPositionLocation = GLES20.glGetAttribLocation(mProgram, A_POSITION);
-        uMatrixLocation = GLES20.glGetUniformLocation(mProgram, U_MATRIX);
-        aColorLocation = GLES20.glGetAttribLocation(mProgram, A_COLOR);
+        int aPositionLocation = getAttrib("a_Position");
+        int aColorLocation = getAttrib("a_Color");
+        mProjectionMatrixHelper = new ProjectionMatrixHelper(mProgram, "u_Matrix");
 
         mVertexData.position(0);
         GLES20.glVertexAttribPointer(aPositionLocation,
@@ -128,26 +97,14 @@ public class L4_ColorfulRenderer implements Renderer {
     @Override
     public void onSurfaceChanged(GL10 glUnused, int width, int height) {
         GLES20.glViewport(0, 0, width, height);
-
-        final float aspectRatio = width > height ?
-                (float) width / (float) height :
-                (float) height / (float) width;
-
-        if (width > height) {
-            Matrix.orthoM(projectionMatrix, 0, -aspectRatio, aspectRatio, -1f, 1f, -1f, 1f);
-        } else {
-            Matrix.orthoM(projectionMatrix, 0, -1f, 1f, -aspectRatio, aspectRatio, -1f, 1f);
-        }
+        mProjectionMatrixHelper.enable(width, height);
     }
 
     @Override
     public void onDrawFrame(GL10 glUnused) {
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
-        drawRectangle();
+        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, POINT_DATA.length / (POSITION_COMPONENT_COUNT + COLOR_COMPONENT_COUNT));
+        GLES20.glDrawArrays(GLES20.GL_POINTS, 0, POINT_DATA.length / (POSITION_COMPONENT_COUNT + COLOR_COMPONENT_COUNT));
     }
 
-    private void drawRectangle() {
-        GLES20.glUniformMatrix4fv(uMatrixLocation, 1, false, projectionMatrix, 0);
-        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
-    }
 }
