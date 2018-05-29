@@ -47,6 +47,7 @@ public class L5_IndexRenderer extends BaseRenderer {
             0.5f, 0.5f,
             -0.5f, 0.5f,
             0f, -1.0f,
+            0f, 1.0f,
     };
 
     /**
@@ -55,7 +56,8 @@ public class L5_IndexRenderer extends BaseRenderer {
     private static final short[] VERTEX_INDEX = {
             0, 1, 2,
             0, 2, 3,
-            0, 4, 1};
+            0, 4, 1,
+            3, 2, 5};
 
     private static final int POSITION_COMPONENT_COUNT = 2;
 
@@ -93,11 +95,10 @@ public class L5_IndexRenderer extends BaseRenderer {
         GLES20.glUniform4f(uColorLocation, 1.0f, 0.0f, 0.0f, 1.0f);
 
         mVertexIndexBuffer.position(0);
-//        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_FAN, 0, POINT_DATA.length / POSITION_COMPONENT_COUNT);
         // 绘制相对复杂的图形时，若顶点有较多重复时，对比数据占用空间而言，glDrawElements会比glDrawArrays小很多，也会更高效
         // 因为在有重复顶点的情况下，glDrawArrays方式需要的3个顶点位置是用Float型的，占3*4的Byte值；
         // 而glDrawElements需要3个Short型的，占3*2Byte值
-        // 1. 绘制模式； 2. 从数组中读取的数据长度； 3. 加载的数据格式； 4. 读取的数据缓冲区
+        // 1. 图形绘制方式； 2. 绘制的顶点数； 3. 索引的数据格式； 4. 索引的数据Buffer
         GLES20.glDrawElements(GLES20.GL_TRIANGLES, VERTEX_INDEX.length,
                 GLES20.GL_UNSIGNED_SHORT, mVertexIndexBuffer);
     }
