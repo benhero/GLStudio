@@ -12,7 +12,7 @@ import android.content.Context;
 import android.opengl.GLES20;
 
 import com.benhero.glstudio.base.BaseRenderer;
-import com.benhero.glstudio.util.ByteBufferUtil;
+import com.benhero.glstudio.util.BufferUtil;
 
 import java.nio.FloatBuffer;
 
@@ -66,7 +66,7 @@ public class L2_1_ShapeRenderer extends BaseRenderer {
 
     public L2_1_ShapeRenderer(Context context) {
         super(context);
-        mVertexData = ByteBufferUtil.createFloatBuffer(POINT_DATA);
+        mVertexData = BufferUtil.createFloatBuffer(POINT_DATA);
     }
 
     @Override

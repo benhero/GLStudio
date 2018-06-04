@@ -10,7 +10,7 @@ import java.nio.ShortBuffer;
  *
  * @author Benhero
  */
-public class ByteBufferUtil {
+public class BufferUtil {
     /**
      * Float类型占4Byte
      */

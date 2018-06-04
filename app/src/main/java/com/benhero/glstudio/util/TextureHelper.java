@@ -97,7 +97,7 @@ public class TextureHelper {
             return mTextureId;
         }
 
-        public void setTextureId(int textureId) {
+        void setTextureId(int textureId) {
             mTextureId = textureId;
         }
 

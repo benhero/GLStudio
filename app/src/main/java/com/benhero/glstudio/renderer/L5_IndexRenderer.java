@@ -4,7 +4,7 @@ import android.content.Context;
 import android.opengl.GLES20;
 
 import com.benhero.glstudio.base.BaseRenderer;
-import com.benhero.glstudio.util.ByteBufferUtil;
+import com.benhero.glstudio.util.BufferUtil;
 import com.benhero.glstudio.util.ProjectionMatrixHelper;
 
 import java.nio.FloatBuffer;
@@ -63,8 +63,8 @@ public class L5_IndexRenderer extends BaseRenderer {
 
     public L5_IndexRenderer(Context context) {
         super(context);
-        mVertexData = ByteBufferUtil.createFloatBuffer(POINT_DATA);
-        mVertexIndexBuffer = ByteBufferUtil.createShortBuffer(VERTEX_INDEX);
+        mVertexData = BufferUtil.createFloatBuffer(POINT_DATA);
+        mVertexIndexBuffer = BufferUtil.createShortBuffer(VERTEX_INDEX);
     }
 
     @Override

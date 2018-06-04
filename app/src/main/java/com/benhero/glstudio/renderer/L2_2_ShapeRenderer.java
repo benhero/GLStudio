@@ -12,7 +12,7 @@ import android.content.Context;
 import android.opengl.GLES20;
 
 import com.benhero.glstudio.base.BaseRenderer;
-import com.benhero.glstudio.util.ByteBufferUtil;
+import com.benhero.glstudio.util.BufferUtil;
 
 import java.nio.FloatBuffer;
 
@@ -119,7 +119,7 @@ public class L2_2_ShapeRenderer extends BaseRenderer {
         mPointData[mPolygonVertexCount * 2 + 2] = (float) (RADIUS * Math.cos(START_POINT_RADIAN));
         mPointData[mPolygonVertexCount * 2 + 3] = (float) (RADIUS * Math.sin(START_POINT_RADIAN));
 
-        mVertexData = ByteBufferUtil.createFloatBuffer(mPointData);
+        mVertexData = BufferUtil.createFloatBuffer(mPointData);
         mVertexData.position(0);
         GLES20.glVertexAttribPointer(aPositionLocation, POSITION_COMPONENT_COUNT, GLES20.GL_FLOAT,
                 false, 0, mVertexData);
