@@ -20,7 +20,7 @@ import javax.microedition.khronos.opengles.GL10;
  *
  * @author Benhero
  */
-public class L7_FBORenderer extends BaseRenderer {
+public class L7_2_FBORenderer extends BaseRenderer {
     private static final String VERTEX_SHADER = "" +
             "uniform mat4 u_Matrix;\n" +
             "attribute vec4 a_Position;\n" +
@@ -115,7 +115,7 @@ public class L7_FBORenderer extends BaseRenderer {
         this.mCallback = callback;
     }
 
-    public L7_FBORenderer(Context context) {
+    public L7_2_FBORenderer(Context context) {
         super(context);
         mVertexData = BufferUtil.createFloatBuffer(POINT_DATA);
         mTexVertexBuffer = BufferUtil.createFloatBuffer(TEX_VERTEX);
