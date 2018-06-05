@@ -14,11 +14,11 @@ public class BufferUtil {
     /**
      * Float类型占4Byte
      */
-    private static final int BYTES_PER_FLOAT = 4;
+    public static final int BYTES_PER_FLOAT = 4;
     /**
      * Short类型占2Byte
      */
-    private static final int BYTES_PER_SHORT = 2;
+    public static final int BYTES_PER_SHORT = 2;
 
     /**
      * 创建一个FloatBuffer

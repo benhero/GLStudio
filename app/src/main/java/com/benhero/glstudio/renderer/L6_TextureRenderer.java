@@ -91,7 +91,7 @@ public class L6_TextureRenderer extends BaseRenderer {
         int aTexCoordLocation = getAttrib("a_TexCoord");
         uTextureUnitLocation = getUniform("u_TextureUnit");
         // 纹理数据
-        mTextureBean = TextureHelper.loadTexture(mContext, R.drawable.tuzki);
+        mTextureBean = TextureHelper.loadTexture(mContext, R.drawable.pikachu);
 
         mVertexData.position(0);
         GLES20.glVertexAttribPointer(aPositionLocation, POSITION_COMPONENT_COUNT,
@@ -103,7 +103,7 @@ public class L6_TextureRenderer extends BaseRenderer {
         GLES20.glVertexAttribPointer(aTexCoordLocation, TEX_VERTEX_COMPONENT_COUNT, GLES20.GL_FLOAT, false, 0, mTexVertexBuffer);
         GLES20.glEnableVertexAttribArray(aTexCoordLocation);
 
-        GLES20.glClearColor(1f, 1f, 1f, 1f);
+        GLES20.glClearColor(0f, 0f, 0f, 1f);
         // 开启纹理透明混合，这样才能绘制透明图片
         GLES20.glEnable(GL10.GL_BLEND);
         GLES20.glBlendFunc(GL10.GL_ONE, GL10.GL_ONE_MINUS_SRC_ALPHA);

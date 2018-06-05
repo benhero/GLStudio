@@ -26,7 +26,6 @@ import com.benhero.glstudio.base.GLRotateAnimation;
 import com.benhero.glstudio.base.GLScaleAnimation;
 import com.benhero.glstudio.base.GLTranslateAnimation;
 import com.benhero.glstudio.renderer.L6_Architecture;
-import com.benhero.glstudio.renderer.L6_TextureRenderer;
 import com.benhero.glstudio.renderer.L7_FBORenderer;
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
@@ -61,9 +60,27 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         mListView.setAdapter(adapter);
         mListView.setOnItemClickListener(this);
         // 自动点击
-        int position = MainListItems.getIndex(L6_TextureRenderer.class);
+        int position = MainListItems.getIndex(L7_FBORenderer.class);
         mListView.performItemClick(adapter.getView(position, null, null),
                 position, adapter.getItemId(position));
+
+        TedPermission.with(MainActivity.this)
+                .setPermissionListener(new PermissionListener() {
+                    @Override
+                    public void onPermissionGranted() {
+//                        Toast.makeText(MainActivity.this, "Permission Granted", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onPermissionDenied(ArrayList<String> deniedPermissions) {
+                        Toast.makeText(MainActivity.this, "Permission Denied\n" + deniedPermissions.toString(), Toast.LENGTH_SHORT).show();
+                    }
+
+
+                })
+                .setDeniedMessage("If you reject permission,you can not use this service\n\nPlease turn on permissions at [Setting] > [Permission]")
+                .setPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .check();
     }
 
     @Override
@@ -115,9 +132,9 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         }
 
         if (clickClass == L6_Architecture.class) {
-            chooseArchitecture5((L6_Architecture) renderer);
+            chooseArchitecture((L6_Architecture) renderer);
         } else if (clickClass == L7_FBORenderer.class) {
-            chooseFBO6((L7_FBORenderer) renderer);
+            chooseFBO((L7_FBORenderer) renderer);
         }
 
         mGLSurfaceView.setRenderer(renderer);
@@ -131,7 +148,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         });
     }
 
-    private void chooseArchitecture5(L6_Architecture renderer) {
+    private void chooseArchitecture(L6_Architecture renderer) {
         GLImageView imageView = new GLImageView();
         imageView.setResId(R.drawable.tuzki);
         imageView.setX(400);
@@ -204,7 +221,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         imageView2.setGLAnimation(alphaAnimation);
     }
 
-    private void chooseFBO6(final L7_FBORenderer renderer) {
+    private void chooseFBO(final L7_FBORenderer renderer) {
         final ImageView imageView = new ImageView(this);
         ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         mRoot.addView(imageView, params);
@@ -212,16 +229,10 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
             @Override
             public void onRendererDone(ByteBuffer data, int width, int height) {
                 final Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-                Log.i("JKL", "MainActivity - onRendererDone: " + data.capacity() + " : " + bitmap.getByteCount());
                 bitmap.copyPixelsFromBuffer(data);
                 final File destFile = new File("/sdcard/A/test"
 //                        + String.valueOf(System.currentTimeMillis())
                         + ".jpg");
-                TedPermission.with(MainActivity.this)
-                        .setPermissionListener(mPermissionListener)
-                        .setDeniedMessage("If you reject permission,you can not use this service\n\nPlease turn on permissions at [Setting] > [Permission]")
-                        .setPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                        .check();
                 try {
                     new File("/sdcard/A").mkdirs();
                     destFile.createNewFile();
@@ -253,17 +264,4 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         });
     }
 
-    PermissionListener mPermissionListener = new PermissionListener() {
-        @Override
-        public void onPermissionGranted() {
-            Toast.makeText(MainActivity.this, "Permission Granted", Toast.LENGTH_SHORT).show();
-        }
-
-        @Override
-        public void onPermissionDenied(ArrayList<String> deniedPermissions) {
-            Toast.makeText(MainActivity.this, "Permission Denied\n" + deniedPermissions.toString(), Toast.LENGTH_SHORT).show();
-        }
-
-
-    };
 }
