@@ -25,7 +25,7 @@ import com.benhero.glstudio.base.GLImageView;
 import com.benhero.glstudio.base.GLRotateAnimation;
 import com.benhero.glstudio.base.GLScaleAnimation;
 import com.benhero.glstudio.base.GLTranslateAnimation;
-import com.benhero.glstudio.renderer.L6_Architecture;
+import com.benhero.glstudio.renderer.L10_Architecture;
 import com.benhero.glstudio.renderer.L7_FBORenderer;
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
@@ -131,8 +131,8 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
             return;
         }
 
-        if (clickClass == L6_Architecture.class) {
-            chooseArchitecture((L6_Architecture) renderer);
+        if (clickClass == L10_Architecture.class) {
+            chooseArchitecture((L10_Architecture) renderer);
         } else if (clickClass == L7_FBORenderer.class) {
             chooseFBO((L7_FBORenderer) renderer);
         }
@@ -148,7 +148,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         });
     }
 
-    private void chooseArchitecture(L6_Architecture renderer) {
+    private void chooseArchitecture(L10_Architecture renderer) {
         GLImageView imageView = new GLImageView();
         imageView.setResId(R.drawable.tuzki);
         imageView.setX(400);
