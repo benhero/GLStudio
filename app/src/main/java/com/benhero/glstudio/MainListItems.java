@@ -15,6 +15,7 @@ import com.benhero.glstudio.renderer.L4_2_ColorfulRenderer;
 import com.benhero.glstudio.renderer.L5_IndexRenderer;
 import com.benhero.glstudio.renderer.L6_TextureRenderer;
 import com.benhero.glstudio.renderer.L7_1_FBORenderer;
+import com.benhero.glstudio.renderer.L7_2_FBORenderer;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -43,6 +44,7 @@ public class MainListItems {
         addItem(new Item(L5_IndexRenderer.class, "索引绘制"));
         addItem(new Item(L6_TextureRenderer.class, "纹理渲染"));
         addItem(new Item(L7_1_FBORenderer.class, "FrameBuffer离屏渲染"));
+        addItem(new Item(L7_2_FBORenderer.class, "FrameBuffer离屏渲染 - RenderBuffer"));
         addItem(new Item(L10_Architecture.class, "动画架构"));
     }
 

@@ -18,6 +18,7 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.benhero.glstudio.base.BaseRenderer;
 import com.benhero.glstudio.base.GLAlphaAnimation;
 import com.benhero.glstudio.base.GLAnimationListener;
 import com.benhero.glstudio.base.GLAnimationSet;
@@ -27,6 +28,7 @@ import com.benhero.glstudio.base.GLScaleAnimation;
 import com.benhero.glstudio.base.GLTranslateAnimation;
 import com.benhero.glstudio.renderer.L10_Architecture;
 import com.benhero.glstudio.renderer.L7_1_FBORenderer;
+import com.benhero.glstudio.renderer.L7_2_FBORenderer;
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
 import com.jayfeng.lesscode.core.BitmapLess;
@@ -60,7 +62,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         mListView.setAdapter(adapter);
         mListView.setOnItemClickListener(this);
         // 自动点击
-        int position = MainListItems.getIndex(L7_1_FBORenderer.class);
+        int position = MainListItems.getIndex(L7_2_FBORenderer.class);
         mListView.performItemClick(adapter.getView(position, null, null),
                 position, adapter.getItemId(position));
 
@@ -133,8 +135,9 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
 
         if (clickClass == L10_Architecture.class) {
             chooseArchitecture((L10_Architecture) renderer);
-        } else if (clickClass == L7_1_FBORenderer.class) {
-            chooseFBO((L7_1_FBORenderer) renderer);
+        } else if (clickClass == L7_1_FBORenderer.class
+                || clickClass == L7_2_FBORenderer.class) {
+            readCurrentFrame((BaseRenderer) renderer);
         }
 
         mGLSurfaceView.setRenderer(renderer);
@@ -204,28 +207,26 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         set.setListener(new GLAnimationListener() {
             @Override
             public void onStart() {
-                Log.e("JKL", "onStart: ");
             }
 
             @Override
             public void onEnd() {
-                Log.e("JKL", "onEnd: ");
             }
 
             @Override
             public void onProgress(float percent) {
-                Log.i("JKL", "onProgress: " + percent);
                 mGLSurfaceView.requestRender();
             }
         });
         imageView2.setGLAnimation(alphaAnimation);
     }
 
-    private void chooseFBO(final L7_1_FBORenderer renderer) {
+    private void readCurrentFrame(final BaseRenderer renderer) {
         final ImageView imageView = new ImageView(this);
-        ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         mRoot.addView(imageView, params);
-        renderer.setCallback(new L7_1_FBORenderer.RendererCallback() {
+        renderer.setRendererCallback(new BaseRenderer.RendererCallback() {
             @Override
             public void onRendererDone(ByteBuffer data, int width, int height) {
                 final Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
@@ -258,7 +259,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                renderer.startRenderer();
+                renderer.setReadCurrentFrame(true);
                 mGLSurfaceView.requestRender();
             }
         });

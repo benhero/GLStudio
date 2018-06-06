@@ -9,7 +9,6 @@ import com.benhero.glstudio.base.BaseRenderer;
 import com.benhero.glstudio.util.BufferUtil;
 import com.benhero.glstudio.util.TextureHelper;
 
-import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 
 import javax.microedition.khronos.egl.EGLConfig;
@@ -84,31 +83,6 @@ public class L7_1_FBORenderer extends BaseRenderer {
     private int[] mFrameBuffer = new int[1];
     private int[] mTexture = new int[1];
 
-    /**
-     * 开始渲染FrameBuffer的标识
-     */
-    private boolean mIsRender;
-
-    private RendererCallback mCallback;
-
-    /**
-     * 渲染完毕的回调
-     */
-    public interface RendererCallback {
-        /**
-         * 渲染完毕
-         *
-         * @param data   缓存数据
-         * @param width  数据宽度
-         * @param height 数据高度
-         */
-        void onRendererDone(ByteBuffer data, int width, int height);
-    }
-
-    public void setCallback(RendererCallback callback) {
-        this.mCallback = callback;
-    }
-
     public L7_1_FBORenderer(Context context) {
         super(context);
         mVertexData = BufferUtil.createFloatBuffer(POINT_DATA);
@@ -152,11 +126,9 @@ public class L7_1_FBORenderer extends BaseRenderer {
 
     @Override
     public void onDrawFrame(GL10 glUnused) {
-        if (!mIsRender) {
+        if (!mIsReadCurrentFrame) {
             return;
         }
-
-        mIsRender = false;
         GLES20.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 
         // 创建FrameBuffer、RenderBuffer、纹理对象
@@ -168,7 +140,7 @@ public class L7_1_FBORenderer extends BaseRenderer {
         // 绘制图片
         drawTexture();
         // 读取当前画面上的像素信息
-        readPixels();
+        readPixels(0, 0, mTextureBean.getWidth(), mTextureBean.getHeight());
         // 解绑FrameBuffer
         unbindFrameBufferInfo();
         deleteEnv();
@@ -214,19 +186,6 @@ public class L7_1_FBORenderer extends BaseRenderer {
         GLES20.glDrawArrays(GLES20.GL_TRIANGLE_FAN, 0, 4);
     }
 
-    private void readPixels() {
-        ByteBuffer buffer = ByteBuffer.allocate(mTextureBean.getWidth() * mTextureBean.getHeight() * BufferUtil.BYTES_PER_FLOAT);
-        GLES20.glReadPixels(0,
-                0,
-                mTextureBean.getWidth(),
-                mTextureBean.getHeight(),
-                GLES20.GL_RGBA,
-                GLES20.GL_UNSIGNED_BYTE, buffer);
-        if (mCallback != null) {
-            mCallback.onRendererDone(buffer, mTextureBean.getWidth(), mTextureBean.getHeight());
-        }
-    }
-
     private void unbindFrameBufferInfo() {
         // 解绑FrameBuffer
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
@@ -235,9 +194,5 @@ public class L7_1_FBORenderer extends BaseRenderer {
     private void deleteEnv() {
         GLES20.glDeleteFramebuffers(1, mFrameBuffer, 0);
         GLES20.glDeleteTextures(1, mTexture, 0);
-    }
-
-    public void startRenderer() {
-        mIsRender = true;
     }
 }

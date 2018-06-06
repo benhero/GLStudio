@@ -9,7 +9,6 @@ import com.benhero.glstudio.base.BaseRenderer;
 import com.benhero.glstudio.util.BufferUtil;
 import com.benhero.glstudio.util.TextureHelper;
 
-import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 
 import javax.microedition.khronos.egl.EGLConfig;
@@ -40,7 +39,7 @@ public class L7_2_FBORenderer extends BaseRenderer {
             "void main()\n" +
             "{\n" +
             "    vec4 pic = texture2D(u_TextureUnit, v_TexCoord);\n" +
-            "    float gray = (pic.r + pic.g + pic.b) / 3.0f;\n" +
+            "    float gray = 1.0f - (pic.r + pic.g + pic.b) / 3.0f;\n" +
             "    gl_FragColor = vec4(gray,gray,gray,pic.a); \n" +
             "}";
     private static final String U_MATRIX = "u_Matrix";
@@ -90,31 +89,6 @@ public class L7_2_FBORenderer extends BaseRenderer {
     private int[] mRenderBuffer = new int[1];
     private int[] mTexture = new int[1];
 
-    /**
-     * 开始渲染FrameBuffer的标识
-     */
-    private boolean mIsRender;
-
-    private RendererCallback mCallback;
-
-    /**
-     * 渲染完毕的回调
-     */
-    public interface RendererCallback {
-        /**
-         * 渲染完毕
-         *
-         * @param data   缓存数据
-         * @param width  数据宽度
-         * @param height 数据高度
-         */
-        void onRendererDone(ByteBuffer data, int width, int height);
-    }
-
-    public void setCallback(RendererCallback callback) {
-        this.mCallback = callback;
-    }
-
     public L7_2_FBORenderer(Context context) {
         super(context);
         mVertexData = BufferUtil.createFloatBuffer(POINT_DATA);
@@ -158,13 +132,12 @@ public class L7_2_FBORenderer extends BaseRenderer {
 
     @Override
     public void onDrawFrame(GL10 glUnused) {
-        if (!mIsRender) {
+        if (!mIsReadCurrentFrame) {
             return;
         }
 
         GLES20.glViewport(0, 0, mTextureBean.getWidth(), mTextureBean.getHeight());
 
-        mIsRender = false;
         GLES20.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 
         // 创建FrameBuffer、RenderBuffer、纹理对象
@@ -174,21 +147,8 @@ public class L7_2_FBORenderer extends BaseRenderer {
         // 绘制图片
         drawTexture();
         // 读取当前画面上的像素信息
-        readPixels();
+        readPixels(0, 0, mTextureBean.getWidth(), mTextureBean.getHeight());
         deleteEnv();
-    }
-
-    private void readPixels() {
-        ByteBuffer buffer = ByteBuffer.allocate(mTextureBean.getWidth() * mTextureBean.getHeight() * BufferUtil.BYTES_PER_FLOAT);
-        GLES20.glReadPixels(0,
-                0,
-                mTextureBean.getWidth(),
-                mTextureBean.getHeight(),
-                GLES20.GL_RGBA,
-                GLES20.GL_UNSIGNED_BYTE, buffer);
-        if (mCallback != null) {
-            mCallback.onRendererDone(buffer, mTextureBean.getWidth(), mTextureBean.getHeight());
-        }
     }
 
     private void createEnv() {
@@ -240,10 +200,6 @@ public class L7_2_FBORenderer extends BaseRenderer {
         GLES20.glDeleteTextures(1, mTexture, 0);
         GLES20.glDeleteRenderbuffers(1, mRenderBuffer, 0);
         GLES20.glDeleteFramebuffers(1, mFrameBuffer, 0);
-    }
-
-    public void startRenderer() {
-        mIsRender = true;
     }
 
     private void drawTexture() {
