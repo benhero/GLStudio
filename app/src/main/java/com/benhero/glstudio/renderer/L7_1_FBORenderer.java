@@ -131,18 +131,19 @@ public class L7_1_FBORenderer extends BaseRenderer {
         }
         GLES20.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 
-        // 创建FrameBuffer、RenderBuffer、纹理对象
+        // 1. 创建FrameBuffer、纹理对象
         createEnv();
-        // 配置FrameBuffer相关的绘制存储信息
+        // 2. 配置FrameBuffer相关的绘制存储信息，并且绑定到当前的绘制环境上
         bindFrameBufferInfo();
-        // 更新视图区域
+        // 3. 更新视图区域
         GLES20.glViewport(0, 0, mTextureBean.getWidth(), mTextureBean.getHeight());
-        // 绘制图片
+        // 4. 绘制图片
         drawTexture();
-        // 读取当前画面上的像素信息
+        // 5. 读取当前画面上的像素信息
         readPixels(0, 0, mTextureBean.getWidth(), mTextureBean.getHeight());
-        // 解绑FrameBuffer
+        // 6. 解绑FrameBuffer
         unbindFrameBufferInfo();
+        // 7. 删除FrameBuffer、纹理对象
         deleteEnv();
     }
 
@@ -150,28 +151,27 @@ public class L7_1_FBORenderer extends BaseRenderer {
         // 1. 创建FrameBuffer
         GLES20.glGenFramebuffers(1, mFrameBuffer, 0);
 
-        // 2. 生成纹理对象
+        // 2.1 生成纹理对象
         GLES20.glGenTextures(1, mTexture, 0);
-        // 3. 绑定纹理对象
+        // 2.2 绑定纹理对象
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mTexture[0]);
-        // 4. 设置纹理对象的相关信息：颜色模式、大小
+        // 2.3 设置纹理对象的相关信息：颜色模式、大小
         GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGBA,
                 mTextureBean.getWidth(), mTextureBean.getHeight(),
                 0, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, null);
-        // 5. 纹理过滤参数设置
+        // 2.4 纹理过滤参数设置
         GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST);
         GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
         GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
         GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
-
-        // 6. 解绑当前纹理，避免后续无关的操作影响了纹理内容
+        // 2.5 解绑当前纹理，避免后续无关的操作影响了纹理内容
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
     }
 
     private void bindFrameBufferInfo() {
-        // 绑定FrameBuffer
+        // 1. 绑定FrameBuffer到当前的绘制环境上
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, mFrameBuffer[0]);
-        // 将纹理对象挂载到FrameBuffer上，存储颜色信息
+        // 2. 将纹理对象挂载到FrameBuffer上，存储颜色信息
         GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER, GLES20.GL_COLOR_ATTACHMENT0,
                 GLES20.GL_TEXTURE_2D, mTexture[0], 0);
     }
