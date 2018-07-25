@@ -13,7 +13,8 @@ import com.benhero.glstudio.renderer.L3_2_OrthoRenderer;
 import com.benhero.glstudio.renderer.L4_1_ColorfulRenderer;
 import com.benhero.glstudio.renderer.L4_2_ColorfulRenderer;
 import com.benhero.glstudio.renderer.L5_IndexRenderer;
-import com.benhero.glstudio.renderer.L6_TextureRenderer;
+import com.benhero.glstudio.renderer.L6_2_TextureRenderer;
+import com.benhero.glstudio.renderer.L6_1_TextureRenderer;
 import com.benhero.glstudio.renderer.L7_1_FBORenderer;
 import com.benhero.glstudio.renderer.L7_2_FBORenderer;
 
@@ -42,7 +43,8 @@ public class MainListItems {
         addItem(new Item(L4_1_ColorfulRenderer.class, "渐变色"));
         addItem(new Item(L4_2_ColorfulRenderer.class, "渐变色 - 数据传递优化"));
         addItem(new Item(L5_IndexRenderer.class, "索引绘制"));
-        addItem(new Item(L6_TextureRenderer.class, "纹理渲染"));
+        addItem(new Item(L6_1_TextureRenderer.class, "纹理渲染"));
+        addItem(new Item(L6_2_TextureRenderer.class, "多纹理渲染"));
         addItem(new Item(L7_1_FBORenderer.class, "FrameBuffer离屏渲染"));
         addItem(new Item(L7_2_FBORenderer.class, "FrameBuffer离屏渲染 - RenderBuffer"));
         addItem(new Item(L10_Architecture.class, "动画架构"));

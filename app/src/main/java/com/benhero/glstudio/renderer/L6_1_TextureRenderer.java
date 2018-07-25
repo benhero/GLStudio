@@ -19,7 +19,7 @@ import javax.microedition.khronos.opengles.GL10;
  *
  * @author Benhero
  */
-public class L6_TextureRenderer extends BaseRenderer {
+public class L6_1_TextureRenderer extends BaseRenderer {
     private static final String VERTEX_SHADER = "" +
             "uniform mat4 u_Matrix;\n" +
             "attribute vec4 a_Position;\n" +
@@ -75,7 +75,7 @@ public class L6_TextureRenderer extends BaseRenderer {
     private TextureHelper.TextureBean mTextureBean;
     private ProjectionMatrixHelper mProjectionMatrixHelper;
 
-    public L6_TextureRenderer(Context context) {
+    public L6_1_TextureRenderer(Context context) {
         super(context);
         mVertexData = BufferUtil.createFloatBuffer(POINT_DATA);
         mTexVertexBuffer = BufferUtil.createFloatBuffer(TEX_VERTEX);

@@ -6,7 +6,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
@@ -27,6 +26,7 @@ import com.benhero.glstudio.base.GLRotateAnimation;
 import com.benhero.glstudio.base.GLScaleAnimation;
 import com.benhero.glstudio.base.GLTranslateAnimation;
 import com.benhero.glstudio.renderer.L10_Architecture;
+import com.benhero.glstudio.renderer.L6_2_TextureRenderer;
 import com.benhero.glstudio.renderer.L7_1_FBORenderer;
 import com.benhero.glstudio.renderer.L7_2_FBORenderer;
 import com.gun0912.tedpermission.PermissionListener;
@@ -62,7 +62,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         mListView.setAdapter(adapter);
         mListView.setOnItemClickListener(this);
         // 自动点击
-        int position = MainListItems.getIndex(L7_2_FBORenderer.class);
+        int position = MainListItems.getIndex(L6_2_TextureRenderer.class);
         mListView.performItemClick(adapter.getView(position, null, null),
                 position, adapter.getItemId(position));
 
@@ -75,12 +75,12 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
 
                     @Override
                     public void onPermissionDenied(ArrayList<String> deniedPermissions) {
-                        Toast.makeText(MainActivity.this, "Permission Denied\n" + deniedPermissions.toString(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, "Permission Denied\n" + deniedPermissions.toString(), Toast
+                                .LENGTH_SHORT).show();
                     }
-
-
                 })
-                .setDeniedMessage("If you reject permission,you can not use this service\n\nPlease turn on permissions at [Setting] > [Permission]")
+                .setDeniedMessage("If you reject permission,you can not use this service\n\nPlease turn on permissions at " +
+                        "[Setting] > [Permission]")
                 .setPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .check();
     }
