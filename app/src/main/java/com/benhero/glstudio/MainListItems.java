@@ -13,10 +13,11 @@ import com.benhero.glstudio.renderer.L3_2_OrthoRenderer;
 import com.benhero.glstudio.renderer.L4_1_ColorfulRenderer;
 import com.benhero.glstudio.renderer.L4_2_ColorfulRenderer;
 import com.benhero.glstudio.renderer.L5_IndexRenderer;
-import com.benhero.glstudio.renderer.L6_2_TextureRenderer;
 import com.benhero.glstudio.renderer.L6_1_TextureRenderer;
+import com.benhero.glstudio.renderer.L6_2_TextureRenderer;
 import com.benhero.glstudio.renderer.L7_1_FBORenderer;
 import com.benhero.glstudio.renderer.L7_2_FBORenderer;
+import com.benhero.glstudio.renderer.P1_1_PointRenderer;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -36,6 +37,7 @@ public class MainListItems {
     static {
         addItem(new Item(L1_1_PointRenderer.class, "基础框架"));
         addItem(new Item(L1_2_PointRenderer.class, "Point的绘制"));
+        addItem(new Item(P1_1_PointRenderer.class, "动态改变顶点位置 & 颜色"));
         addItem(new Item(L2_1_ShapeRenderer.class, "基础图形绘制 - 点、线、三角形"));
         addItem(new Item(L2_2_ShapeRenderer.class, "基础图形绘制 - 多边形"));
         addItem(new Item(L3_1_OrthoRenderer.class, "正交投影变化"));

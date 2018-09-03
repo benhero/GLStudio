@@ -26,9 +26,9 @@ import com.benhero.glstudio.base.GLRotateAnimation;
 import com.benhero.glstudio.base.GLScaleAnimation;
 import com.benhero.glstudio.base.GLTranslateAnimation;
 import com.benhero.glstudio.renderer.L10_Architecture;
-import com.benhero.glstudio.renderer.L6_2_TextureRenderer;
 import com.benhero.glstudio.renderer.L7_1_FBORenderer;
 import com.benhero.glstudio.renderer.L7_2_FBORenderer;
+import com.benhero.glstudio.renderer.P1_1_PointRenderer;
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
 import com.jayfeng.lesscode.core.BitmapLess;
@@ -62,7 +62,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         mListView.setAdapter(adapter);
         mListView.setOnItemClickListener(this);
         // 自动点击
-        int position = MainListItems.getIndex(L6_2_TextureRenderer.class);
+        int position = MainListItems.getIndex(P1_1_PointRenderer.class);
         mListView.performItemClick(adapter.getView(position, null, null),
                 position, adapter.getItemId(position));
 
