@@ -3,6 +3,7 @@ package com.benhero.glstudio;
 import android.content.Context;
 import android.opengl.GLSurfaceView;
 
+import com.benhero.glstudio.renderer.KotlinRender;
 import com.benhero.glstudio.renderer.L10_Architecture;
 import com.benhero.glstudio.renderer.L1_1_PointRenderer;
 import com.benhero.glstudio.renderer.L1_2_PointRenderer;
@@ -50,6 +51,7 @@ public class MainListItems {
         addItem(new Item(L7_1_FBORenderer.class, "FrameBuffer离屏渲染"));
         addItem(new Item(L7_2_FBORenderer.class, "FrameBuffer离屏渲染 - RenderBuffer"));
         addItem(new Item(L10_Architecture.class, "动画架构"));
+        addItem(new Item(KotlinRender.class, "使用kotlin编写"));
     }
 
     /**
