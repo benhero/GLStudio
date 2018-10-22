@@ -166,11 +166,11 @@ public class L6_2_TextureRenderer extends BaseRenderer {
         GLES20.glEnableVertexAttribArray(mAPositionLocation);
 
         // 设置当前活动的纹理单元为纹理单元0
-        GLES20.glActiveTexture(GLES20.GL_TEXTURE3);
+        GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
         // 将纹理ID绑定到当前活动的纹理单元上
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mTextureBean2.getTextureId());
         // 将纹理单元传递片段着色器的u_TextureUnit
-        GLES20.glUniform1i(uTextureUnitLocation, 3);
+        GLES20.glUniform1i(uTextureUnitLocation, 0);
         GLES20.glDrawArrays(GLES20.GL_TRIANGLE_FAN, 0, POINT_DATA.length / POSITION_COMPONENT_COUNT);
     }
 }
