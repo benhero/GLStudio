@@ -86,12 +86,12 @@ public class L6_1_TextureRenderer extends BaseRenderer {
         makeProgram(VERTEX_SHADER, FRAGMENT_SHADER);
 
         int aPositionLocation = getAttrib("a_Position");
-        mProjectionMatrixHelper = new ProjectionMatrixHelper(mProgram, "u_Matrix");
+        mProjectionMatrixHelper = new ProjectionMatrixHelper(getProgram(), "u_Matrix");
         // 纹理坐标索引
         int aTexCoordLocation = getAttrib("a_TexCoord");
         uTextureUnitLocation = getUniform("u_TextureUnit");
         // 纹理数据
-        mTextureBean = TextureHelper.loadTexture(mContext, R.drawable.pikachu);
+        mTextureBean = TextureHelper.loadTexture(getContext(), R.drawable.pikachu);
 
         mVertexData.position(0);
         GLES20.glVertexAttribPointer(aPositionLocation, POSITION_COMPONENT_COUNT,

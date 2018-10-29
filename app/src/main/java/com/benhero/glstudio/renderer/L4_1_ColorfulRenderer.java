@@ -80,7 +80,7 @@ public class L4_1_ColorfulRenderer extends BaseRenderer {
 
         int aPositionLocation = getAttrib("a_Position");
         int aColorLocation = getAttrib("a_Color");
-        mProjectionMatrixHelper = new ProjectionMatrixHelper(mProgram, "u_Matrix");
+        mProjectionMatrixHelper = new ProjectionMatrixHelper(getProgram(), "u_Matrix");
 
         mVertexData.position(0);
         GLES20.glVertexAttribPointer(aPositionLocation,

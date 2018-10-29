@@ -73,7 +73,7 @@ public class L5_IndexRenderer extends BaseRenderer {
 
         uColorLocation = getUniform("u_Color");
         int aPositionLocation = getAttrib("a_Position");
-        mProjectionMatrixHelper = new ProjectionMatrixHelper(mProgram, "u_Matrix");
+        mProjectionMatrixHelper = new ProjectionMatrixHelper(getProgram(), "u_Matrix");
 
         mVertexData.position(0);
         GLES20.glVertexAttribPointer(aPositionLocation, POSITION_COMPONENT_COUNT, GLES20.GL_FLOAT,

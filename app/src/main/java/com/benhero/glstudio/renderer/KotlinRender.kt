@@ -64,7 +64,6 @@ class KotlinRender(context: Context) : BaseRenderer(context) {
             0f, 0f, 1f, 0f,
             0f, 0f, 0f, 1f
     )
-    private var program = 0
     private var positionLocation = 0
     private var matrixLocation = 0
     private var colorLocation = 0

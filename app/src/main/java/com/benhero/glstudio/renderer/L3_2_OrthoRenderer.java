@@ -37,7 +37,7 @@ public class L3_2_OrthoRenderer extends L2_2_ShapeRenderer {
     @Override
     public void onSurfaceCreated(GL10 glUnused, EGLConfig config) {
         super.onSurfaceCreated(glUnused, config);
-        mProjectionMatrixHelper = new ProjectionMatrixHelper(mProgram, "u_Matrix");
+        mProjectionMatrixHelper = new ProjectionMatrixHelper(getProgram(), "u_Matrix");
     }
 
     @Override

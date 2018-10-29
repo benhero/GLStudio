@@ -22,6 +22,7 @@ import com.gun0912.tedpermission.TedPermission
 import com.jayfeng.lesscode.core.BitmapLess
 import java.io.File
 import java.io.IOException
+import java.nio.ByteBuffer
 import java.util.*
 
 /**
@@ -194,28 +195,31 @@ class MainActivity : Activity(), AdapterView.OnItemClickListener {
         val params = ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
         root.addView(imageView, params)
-        renderer.setRendererCallback { data, width, height ->
-            val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
-            bitmap.copyPixelsFromBuffer(data)
-            val destFile = File("/sdcard/A/test"
-                    //                        + String.valueOf(System.currentTimeMillis())
-                    + ".jpg")
-            try {
-                File("/sdcard/A").mkdirs()
-                destFile.createNewFile()
-            } catch (e: IOException) {
-                e.printStackTrace()
+        renderer.rendererCallback = object : BaseRenderer.RendererCallback {
+            override fun onRendererDone(data: ByteBuffer, width: Int, height: Int) {
+                val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+                bitmap.copyPixelsFromBuffer(data)
+                val destFile = File("/sdcard/A/test"
+                        //+ String.valueOf(System.currentTimeMillis())
+                        + ".jpg")
+                try {
+                    File("/sdcard/A").mkdirs()
+                    destFile.createNewFile()
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                }
+
+                Thread(Runnable {
+                    BitmapLess.`$save`(bitmap, Bitmap.CompressFormat.JPEG, 100, destFile)
+                    imageView.post { imageView.setImageBitmap(BitmapFactory.decodeFile(destFile.path)) }
+                }).start()
+                data.clear()
             }
 
-            Thread(Runnable {
-                BitmapLess.`$save`(bitmap, Bitmap.CompressFormat.JPEG, 100, destFile)
-                imageView.post { imageView.setImageBitmap(BitmapFactory.decodeFile(destFile.path)) }
-            }).start()
-            data.clear()
         }
 
         imageView.setOnClickListener {
-            renderer.setReadCurrentFrame(true)
+            renderer.isReadCurrentFrame = true
             glSurfaceView!!.requestRender()
         }
     }

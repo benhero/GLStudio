@@ -115,7 +115,7 @@ public class L7_2_FBORenderer extends BaseRenderer {
         GLES20.glEnableVertexAttribArray(aTexCoordLocation);
 
         // 纹理数据
-        mTextureBean = TextureHelper.loadTexture(mContext, R.drawable.pikachu);
+        mTextureBean = TextureHelper.loadTexture(getContext(), R.drawable.pikachu);
 
         // 由于Android屏幕上绘制的起始点在左上角，而GL纹理坐标是在左下角，所以需要进行水平翻转，即Y轴翻转
         Matrix.scaleM(mProjectionMatrix, 0, 1, -1, 1);
@@ -132,7 +132,7 @@ public class L7_2_FBORenderer extends BaseRenderer {
 
     @Override
     public void onDrawFrame(GL10 glUnused) {
-        if (!mIsReadCurrentFrame) {
+        if (!isReadCurrentFrame()) {
             return;
         }
 
