@@ -26,39 +26,60 @@ class L6_3_TextureRenderer(context: Context) : BaseRenderer(context) {
             attribute vec4 a_Position;
             attribute vec2 a_TexCoord;
             varying vec2 v_TexCoord;
+            attribute vec2 a_TexCoord2;
+            varying vec2 v_TexCoord2;
             void main() {
                 v_TexCoord = a_TexCoord;
+                v_TexCoord2 = a_TexCoord2;
                 gl_Position = u_Matrix * a_Position;
             }
             """
         val FRAGMENT_SHADER = """
             precision mediump float;
             varying vec2 v_TexCoord;
+            varying vec2 v_TexCoord2;
             uniform sampler2D u_TextureUnit1;
             uniform sampler2D u_TextureUnit2;
             uniform sampler2D u_TextureUnit3;
+
+            bool isOutRect(vec2 coord) {
+                return coord.x < 0.0 || coord.x > 1.0 || coord.y < 0.0 || coord.y > 1.0;
+            }
             void main() {
                 vec4 texture1 = texture2D(u_TextureUnit1, v_TexCoord);
-                vec4 texture2 = texture2D(u_TextureUnit2, v_TexCoord);
-                vec4 texture3 = texture2D(u_TextureUnit3, v_TexCoord);
-                if (v_TexCoord.x < 0.0 || v_TexCoord.x > 1.0 || v_TexCoord.y < 0.0 || v_TexCoord.y > 1.0) {
-                    gl_FragColor = vec4(0.0);
-                    return;
-                }
-                if (texture3.r == 0.0) {
-                    gl_FragColor = texture2;
+                vec4 texture2 = texture2D(u_TextureUnit2, v_TexCoord2);
+                vec4 texture3 = texture2D(u_TextureUnit3, v_TexCoord2);
+                bool isOut1 = isOutRect(v_TexCoord);
+                bool isOut2 = isOutRect(v_TexCoord2);
+
+                if (isOut2) {
+                    // 贴纸范围外
+                    if (!isOut1) {
+                        // 背景范围内，绘制背景
+                        gl_FragColor = texture1;
+                    }
                 } else {
-                    gl_FragColor = texture1;
+                    // 贴纸范围内
+                    if (texture3.r == 0.0) {
+                        // 蒙版内，画贴纸
+                        gl_FragColor = texture2;
+                    } else if (!isOut1) {
+                        // 蒙版外，背景内，画背景
+                        gl_FragColor = texture1;
+                    }
                 }
             }
             """
         private val PIKACHU_VERTEX_DATA = floatArrayOf(-1.0f, -1.0f, -1.0f, 1.0f, 1.0f, 1.0f, 1.0f, -1.0f)
 
         private val TEXTURE_DATA = floatArrayOf(0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f)
+
+        private val TEXTURE_DATA2 = floatArrayOf(0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f)
     }
 
     private val pikachuVertexBuffer: FloatBuffer
     private val textureBuffer: FloatBuffer
+    private val textureBuffer2: FloatBuffer
     lateinit var projectionMatrixHelper: ProjectionMatrixHelper
     private var textureLocation1: Int = 0
     private var textureLocation2: Int = 0
@@ -71,6 +92,7 @@ class L6_3_TextureRenderer(context: Context) : BaseRenderer(context) {
     init {
         pikachuVertexBuffer = BufferUtil.createFloatBuffer(PIKACHU_VERTEX_DATA)
         textureBuffer = BufferUtil.createFloatBuffer(TEXTURE_DATA)
+        textureBuffer2 = BufferUtil.createFloatBuffer(TEXTURE_DATA2)
     }
 
     override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
@@ -81,6 +103,7 @@ class L6_3_TextureRenderer(context: Context) : BaseRenderer(context) {
         positionLocation = getAttrib("a_Position")
 
         val texCoordLocation = getAttrib("a_TexCoord")
+        val texCoordLocation2 = getAttrib("a_TexCoord2")
         textureLocation1 = getUniform("u_TextureUnit1")
         textureLocation2 = getUniform("u_TextureUnit2")
         textureLocation3 = getUniform("u_TextureUnit3")
@@ -92,6 +115,10 @@ class L6_3_TextureRenderer(context: Context) : BaseRenderer(context) {
         textureBuffer.position(0)
         GLES20.glVertexAttribPointer(texCoordLocation, TEX_VERTEX_COMPONENT_COUNT, GLES20.GL_FLOAT, false, 0, textureBuffer)
         GLES20.glEnableVertexAttribArray(texCoordLocation)
+
+        textureBuffer2.position(0)
+        GLES20.glVertexAttribPointer(texCoordLocation2, TEX_VERTEX_COMPONENT_COUNT, GLES20.GL_FLOAT, false, 0, textureBuffer2)
+        GLES20.glEnableVertexAttribArray(texCoordLocation2)
     }
 
     override fun onSurfaceChanged(gl: GL10?, width: Int, height: Int) {
