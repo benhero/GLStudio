@@ -147,7 +147,7 @@ public class L7_2_FBORenderer extends BaseRenderer {
         // 绘制图片
         drawTexture();
         // 读取当前画面上的像素信息
-        readPixels(0, 0, mTextureBean.getWidth(), mTextureBean.getHeight());
+        onReadPixel(0, 0, mTextureBean.getWidth(), mTextureBean.getHeight());
         deleteEnv();
     }
 

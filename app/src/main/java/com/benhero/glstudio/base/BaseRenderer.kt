@@ -1,12 +1,14 @@
 package com.benhero.glstudio.base
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.opengl.GLES20
 import android.opengl.GLSurfaceView
 import com.benhero.glstudio.util.BufferUtil
 import com.benhero.glstudio.util.LoggerConfig
 import com.benhero.glstudio.util.ShaderHelper
 import java.nio.ByteBuffer
+import javax.microedition.khronos.opengles.GL10
 
 /**
  * GL渲染基础类
@@ -17,6 +19,8 @@ abstract class BaseRenderer(val context: Context) : GLSurfaceView.Renderer {
     protected var program = 0
     public var rendererCallback: RendererCallback? = null
     public var isReadCurrentFrame = false
+    private var outputWidth: Int = 0
+    private var outputHeight: Int = 0
 
     /**
      * 渲染完毕的回调
@@ -62,10 +66,15 @@ abstract class BaseRenderer(val context: Context) : GLSurfaceView.Renderer {
         return GLES20.glGetAttribLocation(program, name)
     }
 
+    override fun onSurfaceChanged(gl: GL10?, width: Int, height: Int) {
+        outputWidth = width
+        outputHeight = height
+    }
+
     /**
      * 获取当前画面帧,并回调接口
      */
-    protected fun readPixels(x: Int, y: Int, width: Int, height: Int) {
+    protected fun onReadPixel(x: Int = 0, y: Int = 0, width: Int = outputWidth, height: Int = outputHeight) {
         if (!isReadCurrentFrame) {
             return
         }
@@ -78,6 +87,20 @@ abstract class BaseRenderer(val context: Context) : GLSurfaceView.Renderer {
                 GLES20.GL_RGBA,
                 GLES20.GL_UNSIGNED_BYTE, buffer)
         rendererCallback!!.onRendererDone(buffer, width, height)
+    }
+
+    protected fun readPixel(w: Int = outputWidth, h: Int = outputHeight): Bitmap {
+        val buffer = ByteBuffer.allocate(w * h * 4)
+        GLES20.glReadPixels(0,
+                0,
+                w,
+                h,
+                GLES20.GL_RGBA,
+                GLES20.GL_UNSIGNED_BYTE, buffer)
+
+        val bitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
+        bitmap.copyPixelsFromBuffer(buffer)
+        return bitmap
     }
 
 }

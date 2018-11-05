@@ -27,6 +27,7 @@ object MainListItems {
         addItem(Item(L5_IndexRenderer::class.java, "索引绘制"))
         addItem(Item(L6_1_TextureRenderer::class.java, "纹理渲染"))
         addItem(Item(L6_2_TextureRenderer::class.java, "多纹理渲染"))
+        addItem(Item(L6_3_TextureRenderer::class.java, "蒙版遮罩"))
         addItem(Item(L7_1_FBORenderer::class.java, "FrameBuffer离屏渲染"))
         addItem(Item(L7_2_FBORenderer::class.java, "FrameBuffer离屏渲染 - RenderBuffer"))
         addItem(Item(L10_Architecture::class.java, "动画架构"))
