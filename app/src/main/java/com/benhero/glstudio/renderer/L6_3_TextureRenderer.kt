@@ -70,11 +70,29 @@ class L6_3_TextureRenderer(context: Context) : BaseRenderer(context) {
                 }
             }
             """
-        private val PIKACHU_VERTEX_DATA = floatArrayOf(-1.0f, -1.0f, -1.0f, 1.0f, 1.0f, 1.0f, 1.0f, -1.0f)
+        private val DEFAULT_VERTEX_DATA = floatArrayOf(
+                -1.0f, -1.0f,
+                -1.0f, 1.0f,
+                1.0f, 1.0f,
+                1.0f, -1.0f)
 
-        private val TEXTURE_DATA = floatArrayOf(0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f)
+        private val PIKACHU_VERTEX_DATA = floatArrayOf(
+                -0.2f, -0.2f,
+                -0.2f, 0.2f,
+                0.2f, 0.2f,
+                0.2f, -0.2f)
 
-        private val TEXTURE_DATA2 = floatArrayOf(0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f)
+        private val TEXTURE_DATA = floatArrayOf(
+                0.0f, 1.0f,
+                0.0f, 0.0f,
+                1.0f, 0.0f,
+                1.0f, 1.0f)
+
+        private val TEXTURE_DATA2 = floatArrayOf(
+                0.0f, 1.0f,
+                0.0f, 0.0f,
+                1.0f, 0.0f,
+                1.0f, 1.0f)
     }
 
     private val pikachuVertexBuffer: FloatBuffer
@@ -90,9 +108,19 @@ class L6_3_TextureRenderer(context: Context) : BaseRenderer(context) {
     private var tuzkiBean: TextureHelper.TextureBean? = null
 
     init {
-        pikachuVertexBuffer = BufferUtil.createFloatBuffer(PIKACHU_VERTEX_DATA)
+        pikachuVertexBuffer = BufferUtil.createFloatBuffer(DEFAULT_VERTEX_DATA)
+        val vertexToTexture = vertexToTexture(PIKACHU_VERTEX_DATA)
         textureBuffer = BufferUtil.createFloatBuffer(TEXTURE_DATA)
-        textureBuffer2 = BufferUtil.createFloatBuffer(TEXTURE_DATA2)
+        textureBuffer2 = BufferUtil.createFloatBuffer(vertexToTexture)
+    }
+
+    fun vertexToTexture(vertex: FloatArray): FloatArray {
+        return floatArrayOf(
+                -(vertex[2] + 1.0f) / 2.0f, 2 - (vertex[3] + 1.0f) / 2.0f,
+                -(vertex[0] + 1.0f) / 2.0f, -(vertex[1] + 1.0f) / 2.0f,
+                2 - (vertex[6] + 1.0f) / 2.0f, -(vertex[7] + 1.0f) / 2.0f,
+                2 - (vertex[4] + 1.0f) / 2.0f, 2 - (vertex[5] + 1.0f) / 2.0f
+        )
     }
 
     override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
