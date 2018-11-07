@@ -31,7 +31,6 @@ object MainListItems {
         addItem(Item(L7_1_FBORenderer::class.java, "FrameBuffer离屏渲染"))
         addItem(Item(L7_2_FBORenderer::class.java, "FrameBuffer离屏渲染 - RenderBuffer"))
         addItem(Item(L10_Architecture::class.java, "动画架构"))
-        addItem(Item(KotlinRender::class.java, "使用kotlin编写"))
     }
 
     private fun addItem(item: Item) {
