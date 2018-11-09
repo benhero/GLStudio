@@ -14,7 +14,7 @@ import android.view.animation.OvershootInterpolator
 import android.widget.*
 import com.benhero.glstudio.base.*
 import com.benhero.glstudio.renderer.L10_Architecture
-import com.benhero.glstudio.renderer.L6_3_TextureRenderer
+import com.benhero.glstudio.renderer.L6_1_TextureRenderer
 import com.benhero.glstudio.renderer.L7_1_FBORenderer
 import com.benhero.glstudio.renderer.L7_2_FBORenderer
 import com.gun0912.tedpermission.PermissionListener
@@ -46,7 +46,7 @@ class MainActivity : Activity(), AdapterView.OnItemClickListener {
         listView.adapter = adapter
         listView.onItemClickListener = this
         // 自动点击
-        val position = MainListItems.getIndex(L6_3_TextureRenderer::class.java)
+        val position = MainListItems.getIndex(L6_1_TextureRenderer::class.java)
         listView.performItemClick(adapter.getView(position, null, listView),
                 position, adapter.getItemId(position))
 

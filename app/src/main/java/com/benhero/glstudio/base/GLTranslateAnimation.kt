@@ -13,11 +13,11 @@ class GLTranslateAnimation : GLAnimation() {
     var toX: Float = 0.toFloat()
     var toY: Float = 0.toFloat()
 
-    override fun applyTransformation(percent: Float, `object`: GLObject) {
-        super.applyTransformation(percent, `object`)
+    override fun applyTransformation(percent: Float, glObject: GLObject) {
+        super.applyTransformation(percent, glObject)
         val currentX = (toX - fromX) * percent + fromX
         val currentY = (toY - fromY) * percent + fromY
-        Matrix.translateM(`object`.positionMatrix, 0,
-                `object`.xPositionToGL(currentX), `object`.yPositionToGL(currentY), 0f)
+        Matrix.translateM(glObject.positionMatrix, 0,
+                glObject.xPositionToGL(currentX), glObject.yPositionToGL(currentY), 0f)
     }
 }

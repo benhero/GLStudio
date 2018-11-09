@@ -18,38 +18,24 @@ import javax.microedition.khronos.opengles.GL10
  */
 class L6_2_TextureRenderer(context: Context) : BaseRenderer(context) {
     companion object {
-        private val VERTEX_SHADER = "" +
-                "uniform mat4 u_Matrix;\n" +
-                "attribute vec4 a_Position;\n" +
-                // 纹理坐标：2个分量，S和T坐标
-                "attribute vec2 a_TexCoord;\n" +
-                "varying vec2 v_TexCoord;\n" +
-                "void main()\n" +
-                "{\n" +
-                "    v_TexCoord = a_TexCoord;\n" +
-                "    gl_Position = u_Matrix * a_Position;\n" +
-                "}"
-        private val FRAGMENT_SHADER = "" +
-                "precision mediump float;\n" +
-                "varying vec2 v_TexCoord;\n" +
-                " uniform int u_mode;\n" +
-                // sampler2D：二维纹理数据的数组
-                "uniform sampler2D u_TextureUnit;\n" +
-                "void main()\n" +
-                "{\n" +
-                "    vec4 pic = texture2D(u_TextureUnit, v_TexCoord);\n" +
-                "    float gray = 1.0f - (pic.r + pic.g + pic.b) / 3.0f;\n" +
-                "    vec4 grayColor = vec4(gray, gray, gray, pic.a);\n" +
-                "    if(u_mode==1)\n" +
-                "    {\n" +
-                "    gl_FragColor = grayColor; \n" +
-                "    }\n" +
-                "    else\n" +
-                "    {\n" +
-                "       gl_FragColor = pic;\n" +
-                "    }\n" +
-
-                "}"
+        private val VERTEX_SHADER = """
+                uniform mat4 u_Matrix;
+                attribute vec4 a_Position;
+                attribute vec2 a_TexCoord;
+                varying vec2 v_TexCoord;
+                void main() {
+                    v_TexCoord = a_TexCoord;
+                    gl_Position = u_Matrix * a_Position;
+                }
+        """
+        private val FRAGMENT_SHADER = """
+                precision mediump float;
+                varying vec2 v_TexCoord;
+                uniform sampler2D u_TextureUnit;
+                void main() {
+                    gl_FragColor = texture2D(u_TextureUnit, v_TexCoord);
+                }
+                """
 
         private val POSITION_COMPONENT_COUNT = 2
 
@@ -81,8 +67,6 @@ class L6_2_TextureRenderer(context: Context) : BaseRenderer(context) {
     private var mProjectionMatrixHelper: ProjectionMatrixHelper? = null
     private var mAPositionLocation: Int = 0
 
-    private var mUniformMode: Int = 0
-
     init {
         mVertexData = BufferUtil.createFloatBuffer(POINT_DATA)
         mVertexData2 = BufferUtil.createFloatBuffer(POINT_DATA2)
@@ -98,10 +82,8 @@ class L6_2_TextureRenderer(context: Context) : BaseRenderer(context) {
         val aTexCoordLocation = getAttrib("a_TexCoord")
         uTextureUnitLocation = getUniform("u_TextureUnit")
         // 纹理数据
-        mTextureBean2 = TextureHelper.loadTexture(context, R.drawable.tuzki)
         mTextureBean = TextureHelper.loadTexture(context, R.drawable.pikachu)
-
-        mUniformMode = GLES20.glGetUniformLocation(program, "u_mode")
+        mTextureBean2 = TextureHelper.loadTexture(context, R.drawable.tuzki)
 
         // 加载纹理坐标
         mTexVertexBuffer.position(0)
@@ -121,10 +103,11 @@ class L6_2_TextureRenderer(context: Context) : BaseRenderer(context) {
 
     override fun onDrawFrame(glUnused: GL10) {
         GLES20.glClear(GL10.GL_COLOR_BUFFER_BIT)
-        // 纹理单元：在OpenGL中，纹理不是直接绘制到片段着色器上，而是通过纹理单元去保存纹理
+        drawPikachu()
+        drawTuzki()
+    }
 
-
-        GLES20.glUniform1i(mUniformMode, 0)
+    private fun drawPikachu() {
         mVertexData.position(0)
         GLES20.glVertexAttribPointer(mAPositionLocation, POSITION_COMPONENT_COUNT,
                 GLES20.GL_FLOAT, false, 0, mVertexData)
@@ -134,23 +117,18 @@ class L6_2_TextureRenderer(context: Context) : BaseRenderer(context) {
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0)
         // 将纹理ID绑定到当前活动的纹理单元上
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mTextureBean!!.textureId)
-        // 将纹理单元传递片段着色器的u_TextureUnit
         GLES20.glUniform1i(uTextureUnitLocation, 0)
         GLES20.glDrawArrays(GLES20.GL_TRIANGLE_FAN, 0, POINT_DATA.size / POSITION_COMPONENT_COUNT)
+    }
 
-
-        GLES20.glUniform1i(mUniformMode, 1)
+    private fun drawTuzki() {
         mVertexData2.position(0)
         GLES20.glVertexAttribPointer(mAPositionLocation, POSITION_COMPONENT_COUNT,
                 GLES20.GL_FLOAT, false, 0, mVertexData2)
         GLES20.glEnableVertexAttribArray(mAPositionLocation)
 
-        // 设置当前活动的纹理单元为纹理单元0
-        GLES20.glActiveTexture(GLES20.GL_TEXTURE0)
-        // 将纹理ID绑定到当前活动的纹理单元上
+        // 绑定新的纹理ID到已激活的纹理单元上
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mTextureBean2!!.textureId)
-        // 将纹理单元传递片段着色器的u_TextureUnit
-        GLES20.glUniform1i(uTextureUnitLocation, 0)
         GLES20.glDrawArrays(GLES20.GL_TRIANGLE_FAN, 0, POINT_DATA.size / POSITION_COMPONENT_COUNT)
     }
 }

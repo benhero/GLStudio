@@ -18,26 +18,26 @@ import javax.microedition.khronos.opengles.GL10
  */
 class L6_1_TextureRenderer(context: Context) : BaseRenderer(context) {
     companion object {
-        private val VERTEX_SHADER = "" +
-                "uniform mat4 u_Matrix;\n" +
-                "attribute vec4 a_Position;\n" +
+        private val VERTEX_SHADER = """
+                uniform mat4 u_Matrix;
+                attribute vec4 a_Position;
                 // 纹理坐标：2个分量，S和T坐标
-                "attribute vec2 a_TexCoord;\n" +
-                "varying vec2 v_TexCoord;\n" +
-                "void main()\n" +
-                "{\n" +
-                "    v_TexCoord = a_TexCoord;\n" +
-                "    gl_Position = u_Matrix * a_Position;\n" +
-                "}"
-        private val FRAGMENT_SHADER = "" +
-                "precision mediump float;\n" +
-                "varying vec2 v_TexCoord;\n" +
+                attribute vec2 a_TexCoord;
+                varying vec2 v_TexCoord;
+                void main() {
+                    v_TexCoord = a_TexCoord;
+                    gl_Position = u_Matrix * a_Position;
+                }
+                """
+        private val FRAGMENT_SHADER = """
+                precision mediump float;
+                varying vec2 v_TexCoord;
                 // sampler2D：二维纹理数据的数组
-                "uniform sampler2D u_TextureUnit;\n" +
-                "void main()\n" +
-                "{\n" +
-                "    gl_FragColor = texture2D(u_TextureUnit, v_TexCoord);\n" +
-                "}"
+                uniform sampler2D u_TextureUnit;
+                void main() {
+                    gl_FragColor = texture2D(u_TextureUnit, v_TexCoord);
+                }
+                """
 
         private val POSITION_COMPONENT_COUNT = 2
 
