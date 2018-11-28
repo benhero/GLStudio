@@ -19,8 +19,8 @@ abstract class BaseRenderer(val context: Context) : GLSurfaceView.Renderer {
     protected var program = 0
     public var rendererCallback: RendererCallback? = null
     public var isReadCurrentFrame = false
-    private var outputWidth: Int = 0
-    private var outputHeight: Int = 0
+    protected var outputWidth: Int = 0
+    protected var outputHeight: Int = 0
 
     /**
      * 渲染完毕的回调

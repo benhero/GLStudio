@@ -29,6 +29,7 @@ object MainListItems {
         addItem(Item(L6_3_TextureRenderer::class.java, "L6_3_蒙版遮罩"))
         addItem(Item(L7_1_FBORenderer::class.java, "L7_1_FrameBuffer离屏渲染"))
         addItem(Item(L7_2_FBORenderer::class.java, "L7_2_FrameBuffer离屏渲染 - RenderBuffer"))
+        addItem(Item(L8_1_FilterRenderer::class.java, "L8_1_滤镜渲染"))
         addItem(Item(L10_Architecture::class.java, "L10_动画架构"))
 
         addItem(Item(P1_1_PointRenderer::class.java, "P1_1_动态改变顶点位置 & 颜色"))
