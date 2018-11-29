@@ -103,4 +103,6 @@ abstract class BaseRenderer(val context: Context) : GLSurfaceView.Renderer {
         return bitmap
     }
 
+    public open fun onClick() {}
+
 }

@@ -67,7 +67,7 @@ open class BaseFilter(val context: Context, val vertexShader: String = VERTEX_SH
     }
 
 
-    public fun onCreated() {
+    public open fun onCreated() {
         makeProgram(vertexShader, fragmentShader)
         val aPositionLocation = getAttrib("a_Position")
         mProjectionMatrixHelper = ProjectionMatrixHelper(program, "u_Matrix")
@@ -93,12 +93,12 @@ open class BaseFilter(val context: Context, val vertexShader: String = VERTEX_SH
         GLES20.glBlendFunc(GL10.GL_ONE, GL10.GL_ONE_MINUS_SRC_ALPHA)
     }
 
-    public fun onSizeChanged(width: Int, height: Int) {
+    public open fun onSizeChanged(width: Int, height: Int) {
         GLES20.glViewport(0, 0, width, height)
         mProjectionMatrixHelper!!.enable(width, height)
     }
 
-    public fun onDraw() {
+    public open fun onDraw() {
         GLES20.glClear(GL10.GL_COLOR_BUFFER_BIT)
         // 纹理单元：在OpenGL中，纹理不是直接绘制到片段着色器上，而是通过纹理单元去保存纹理
 
@@ -112,6 +112,11 @@ open class BaseFilter(val context: Context, val vertexShader: String = VERTEX_SH
         GLES20.glUniform1i(uTextureUnitLocation, 0)
 
         GLES20.glDrawArrays(GLES20.GL_TRIANGLE_FAN, 0, POINT_DATA.size / POSITION_COMPONENT_COUNT)
+    }
+
+    public open fun onDestroy() {
+        GLES20.glDeleteProgram(program)
+        program = 0
     }
 
     /**
