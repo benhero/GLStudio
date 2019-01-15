@@ -1,11 +1,13 @@
 package com.benhero.glstudio.renderer
 
 import android.content.Context
+import com.benhero.glstudio.R
 import com.benhero.glstudio.base.BaseRenderer
 import com.benhero.glstudio.filter.BaseFilter
 import com.benhero.glstudio.filter.GrayFilter
 import com.benhero.glstudio.filter.InverseFilter
 import com.benhero.glstudio.filter.LightUpFilter
+import com.benhero.glstudio.util.TextureHelper
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
@@ -19,6 +21,7 @@ class L8_1_FilterRenderer(context: Context) : BaseRenderer(context) {
     var drawIndex = 0
     var isChanged = false
     var currentFilter: BaseFilter
+    var textureBean: TextureHelper.TextureBean? = null
 
     init {
         filterList.add(BaseFilter(context))
@@ -30,11 +33,13 @@ class L8_1_FilterRenderer(context: Context) : BaseRenderer(context) {
 
     override fun onSurfaceCreated(glUnused: GL10, config: EGLConfig) {
         currentFilter.onCreated()
+        textureBean = TextureHelper.loadTexture(context, R.drawable.pikachu)
     }
 
     override fun onSurfaceChanged(gl: GL10?, width: Int, height: Int) {
         super.onSurfaceChanged(gl, width, height)
         currentFilter.onSizeChanged(width, height)
+        currentFilter.textureBean = textureBean
     }
 
     override fun onDrawFrame(glUnused: GL10) {
@@ -49,6 +54,7 @@ class L8_1_FilterRenderer(context: Context) : BaseRenderer(context) {
 
             currentFilter.onCreated()
             currentFilter.onSizeChanged(outputWidth, outputHeight)
+            currentFilter.textureBean = textureBean
             isChanged = false
         }
 
@@ -61,5 +67,4 @@ class L8_1_FilterRenderer(context: Context) : BaseRenderer(context) {
         drawIndex = if (drawIndex >= filterList.size) 0 else drawIndex
         isChanged = true
     }
-
 }

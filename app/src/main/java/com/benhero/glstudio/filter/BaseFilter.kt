@@ -2,7 +2,6 @@ package com.benhero.glstudio.filter
 
 import android.content.Context
 import android.opengl.GLES20
-import com.benhero.glstudio.R
 import com.benhero.glstudio.util.*
 import java.nio.FloatBuffer
 import javax.microedition.khronos.opengles.GL10
@@ -13,7 +12,7 @@ import javax.microedition.khronos.opengles.GL10
  * @author Benhero
  * @date   2018/11/28
  */
-open class BaseFilter(val context: Context, val vertexShader: String = VERTEX_SHADER, val fragmentShader : String = FRAGMENT_SHADER) {
+open class BaseFilter(val context: Context, val vertexShader: String = VERTEX_SHADER, val fragmentShader: String = FRAGMENT_SHADER) {
     companion object {
         val VERTEX_SHADER = """
                 uniform mat4 u_Matrix;
@@ -56,8 +55,8 @@ open class BaseFilter(val context: Context, val vertexShader: String = VERTEX_SH
     /**
      * 纹理数据
      */
-    private var mTextureBean: TextureHelper.TextureBean? = null
-    private var mProjectionMatrixHelper: ProjectionMatrixHelper? = null
+    var textureBean: TextureHelper.TextureBean? = null
+    private var projectionMatrixHelper: ProjectionMatrixHelper? = null
 
     var program = 0
 
@@ -70,12 +69,10 @@ open class BaseFilter(val context: Context, val vertexShader: String = VERTEX_SH
     public open fun onCreated() {
         makeProgram(vertexShader, fragmentShader)
         val aPositionLocation = getAttrib("a_Position")
-        mProjectionMatrixHelper = ProjectionMatrixHelper(program, "u_Matrix")
+        projectionMatrixHelper = ProjectionMatrixHelper(program, "u_Matrix")
         // 纹理坐标索引
         val aTexCoordLocation = getAttrib("a_TexCoord")
         uTextureUnitLocation = getUniform("u_TextureUnit")
-        // 纹理数据
-        mTextureBean = TextureHelper.loadTexture(context, R.drawable.pikachu)
 
         mVertexData.position(0)
         GLES20.glVertexAttribPointer(aPositionLocation, POSITION_COMPONENT_COUNT,
@@ -95,7 +92,7 @@ open class BaseFilter(val context: Context, val vertexShader: String = VERTEX_SH
 
     public open fun onSizeChanged(width: Int, height: Int) {
         GLES20.glViewport(0, 0, width, height)
-        mProjectionMatrixHelper!!.enable(width, height)
+        projectionMatrixHelper!!.enable(width, height)
     }
 
     public open fun onDraw() {
@@ -106,7 +103,7 @@ open class BaseFilter(val context: Context, val vertexShader: String = VERTEX_SH
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0)
 
         // 将纹理ID绑定到当前活动的纹理单元上
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mTextureBean!!.textureId)
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureBean?.textureId ?: 0)
 
         // 将纹理单元传递片段着色器的u_TextureUnit
         GLES20.glUniform1i(uTextureUnitLocation, 0)
