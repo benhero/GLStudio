@@ -3,10 +3,7 @@ package com.benhero.glstudio.renderer
 import android.content.Context
 import com.benhero.glstudio.R
 import com.benhero.glstudio.base.BaseRenderer
-import com.benhero.glstudio.filter.BaseFilter
-import com.benhero.glstudio.filter.GrayFilter
-import com.benhero.glstudio.filter.InverseFilter
-import com.benhero.glstudio.filter.LightUpFilter
+import com.benhero.glstudio.filter.*
 import com.benhero.glstudio.util.TextureHelper
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
@@ -25,9 +22,10 @@ class L8_1_FilterRenderer(context: Context) : BaseRenderer(context) {
 
     init {
         filterList.add(BaseFilter(context))
-        filterList.add(GrayFilter(context))
         filterList.add(InverseFilter(context))
+        filterList.add(GrayFilter(context))
         filterList.add(LightUpFilter(context))
+        filterList.add(ScaleFilter(context))
         currentFilter = filterList.get(0)
     }
 
@@ -44,7 +42,7 @@ class L8_1_FilterRenderer(context: Context) : BaseRenderer(context) {
 
     override fun onDrawFrame(glUnused: GL10) {
         if (isChanged) {
-            currentFilter = filterList.get(drawIndex)
+            currentFilter = filterList[drawIndex]
 
             filterList.forEach {
                 if (it != currentFilter) {

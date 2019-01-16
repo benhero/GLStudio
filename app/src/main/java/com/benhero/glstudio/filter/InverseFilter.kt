@@ -16,7 +16,7 @@ class InverseFilter(context: Context) : BaseFilter(context, VERTEX_SHADER, INVER
                 uniform sampler2D u_TextureUnit;
                 void main() {
                     vec4 src = texture2D(u_TextureUnit, v_TexCoord);
-                    gl_FragColor =vec4(1.0 - src.r, 1.0 - src.g, 1.0 - src.b, 1.0);
+                    gl_FragColor = vec4(1.0 - src.r, 1.0 - src.g, 1.0 - src.b, 1.0);
                 }
                 """
     }
