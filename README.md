@@ -7,7 +7,7 @@ OpenGL基础入门教程，暂定专注于2D图形绘制。
 # 博客教程
 ## 基础知识
 章节 | 完成情况
----|:---:|:---:
+---| :---:
 [技术背景](https://www.jianshu.com/p/8dd045253ef7) |  √
 [基础概念](https://www.jianshu.com/p/a818684333f2)|   √
 [架构体系](https://www.jianshu.com/p/a772bfc2276b) |  √
