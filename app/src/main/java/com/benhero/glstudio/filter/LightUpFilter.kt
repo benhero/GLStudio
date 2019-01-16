@@ -15,27 +15,27 @@ class LightUpFilter(context: Context) : BaseFilter(context, VERTEX_SHADER, INVER
                 precision mediump float;
                 varying vec2 v_TexCoord;
                 uniform sampler2D u_TextureUnit;
-                uniform float uTime;
+                uniform float intensity;
                 void main() {
-                    float lightUpValue = abs(sin(uTime / 1000.0)) / 4.0;
                     vec4 src = texture2D(u_TextureUnit, v_TexCoord);
-                    vec4 addColor = vec4(lightUpValue, lightUpValue, lightUpValue, 1.0);
+                    vec4 addColor = vec4(intensity, intensity, intensity, 1.0);
                     gl_FragColor = src + addColor;
                 }
                 """
     }
 
-    private var uTime: Int = 0
+    private var intensityLocation: Int = 0
     private var startTime: Long = 0
 
     override public fun onCreated() {
         super.onCreated()
         startTime = System.currentTimeMillis()
-        uTime = getUniform("uTime")
+        intensityLocation = getUniform("intensity")
     }
 
     override public fun onDraw() {
         super.onDraw()
-        GLES20.glUniform1f(uTime, (System.currentTimeMillis() - startTime).toFloat())
+        val intensity = Math.abs(Math.sin((System.currentTimeMillis() - startTime) / 1000.0)) / 4.0
+        GLES20.glUniform1f(intensityLocation, intensity.toFloat())
     }
 }

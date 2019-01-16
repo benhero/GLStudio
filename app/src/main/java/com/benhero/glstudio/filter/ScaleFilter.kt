@@ -15,15 +15,14 @@ class ScaleFilter(context: Context) : BaseFilter(context, VERTEX_SHADER, INVERSE
                 precision mediump float;
                 varying vec2 v_TexCoord;
                 uniform sampler2D u_TextureUnit;
-                uniform float uTime;
+                uniform float intensity;
 
                 vec2 scale(vec2 srcCoord, float xScale, float yScale) {
                     return vec2((srcCoord.x - 0.5) / xScale + 0.5, (srcCoord.y - 0.5) / yScale + 0.5);
                 }
 
                 void main() {
-                    float scaleValue = abs(sin(uTime / 1000.0)) + 0.5;
-                    vec2 offsetTexCoord = scale(v_TexCoord, scaleValue, scaleValue);
+                    vec2 offsetTexCoord = scale(v_TexCoord, intensity, intensity);
                     if (offsetTexCoord.x >= 0.0 && offsetTexCoord.x <= 1.0 &&
                         offsetTexCoord.y >= 0.0 && offsetTexCoord.y <= 1.0) {
                         gl_FragColor = texture2D(u_TextureUnit, offsetTexCoord);
@@ -32,17 +31,18 @@ class ScaleFilter(context: Context) : BaseFilter(context, VERTEX_SHADER, INVERSE
                 """
     }
 
-    private var uTime: Int = 0
+    private var intensityLocation: Int = 0
     private var startTime: Long = 0
 
     override public fun onCreated() {
         super.onCreated()
         startTime = System.currentTimeMillis()
-        uTime = getUniform("uTime")
+        intensityLocation = getUniform("intensity")
     }
 
     override public fun onDraw() {
         super.onDraw()
-        GLES20.glUniform1f(uTime, (System.currentTimeMillis() - startTime).toFloat())
+        val intensity = Math.abs(Math.sin((System.currentTimeMillis() - startTime) / 1000.0)) + 0.5
+        GLES20.glUniform1f(intensityLocation, intensity.toFloat())
     }
 }
