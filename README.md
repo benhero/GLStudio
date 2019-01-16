@@ -19,11 +19,11 @@ GLSL语言基础 |1  | ○
 [纹理绘制](https://www.jianshu.com/p/3659f4649f98)|3 |√
 [多纹理绘制](https://www.jianshu.com/p/94f42d0a1939)|2 |√
 FBO离屏渲染|3 |√
+[基础滤镜](https://www.jianshu.com/p/dde06aefc480) |  √
 EGL | 3 |○
 坐标系统&图形变换|2 |○
 颜色混合|3 |○
 OES|2 |○
-基础滤镜 | 2 |√
 
 ## 专题练习
 
