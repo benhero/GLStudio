@@ -21,11 +21,12 @@ class L8_1_FilterRenderer(context: Context) : BaseRenderer(context) {
     var textureBean: TextureHelper.TextureBean? = null
 
     init {
+        filterList.add(TranslateFilter(context))
+        filterList.add(ScaleFilter(context))
         filterList.add(BaseFilter(context))
         filterList.add(InverseFilter(context))
         filterList.add(GrayFilter(context))
         filterList.add(LightUpFilter(context))
-        filterList.add(ScaleFilter(context))
         currentFilter = filterList.get(0)
     }
 
