@@ -9,9 +9,9 @@ import android.opengl.GLES20
  * @author Benhero
  * @date   2019-1-16
  */
-class ScaleFilter(context: Context) : BaseFilter(context, VERTEX_SHADER, INVERSE_FRAGMENT_SHADER) {
+class ScaleFilter(context: Context) : BaseFilter(context, VERTEX_SHADER, FRAGMENT_SHADER) {
     companion object {
-        val INVERSE_FRAGMENT_SHADER = """
+        const val FRAGMENT_SHADER = """
                 precision mediump float;
                 varying vec2 v_TexCoord;
                 uniform sampler2D u_TextureUnit;
@@ -34,13 +34,13 @@ class ScaleFilter(context: Context) : BaseFilter(context, VERTEX_SHADER, INVERSE
     private var intensityLocation: Int = 0
     private var startTime: Long = 0
 
-    override public fun onCreated() {
+    override fun onCreated() {
         super.onCreated()
         startTime = System.currentTimeMillis()
         intensityLocation = getUniform("intensity")
     }
 
-    override public fun onDraw() {
+    override fun onDraw() {
         super.onDraw()
         val intensity = Math.abs(Math.sin((System.currentTimeMillis() - startTime) / 1000.0)) + 0.5
         GLES20.glUniform1f(intensityLocation, intensity.toFloat())

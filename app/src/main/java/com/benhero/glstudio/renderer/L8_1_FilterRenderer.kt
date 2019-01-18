@@ -14,20 +14,22 @@ import javax.microedition.khronos.opengles.GL10
  * @author Benhero
  */
 class L8_1_FilterRenderer(context: Context) : BaseRenderer(context) {
-    val filterList = ArrayList<BaseFilter>()
-    var drawIndex = 0
-    var isChanged = false
-    var currentFilter: BaseFilter
-    var textureBean: TextureHelper.TextureBean? = null
+    private val filterList = ArrayList<BaseFilter>()
+    private var drawIndex = 0
+    private var isChanged = false
+    private var currentFilter: BaseFilter
+    private var textureBean: TextureHelper.TextureBean? = null
 
     init {
+        filterList.add(ClonePartFilter(context))
+        filterList.add(BaseFilter(context))
+        filterList.add(CloneFullFilter(context))
         filterList.add(TranslateFilter(context))
         filterList.add(ScaleFilter(context))
-        filterList.add(BaseFilter(context))
         filterList.add(InverseFilter(context))
         filterList.add(GrayFilter(context))
         filterList.add(LightUpFilter(context))
-        currentFilter = filterList.get(0)
+        currentFilter = filterList[0]
     }
 
     override fun onSurfaceCreated(glUnused: GL10, config: EGLConfig) {

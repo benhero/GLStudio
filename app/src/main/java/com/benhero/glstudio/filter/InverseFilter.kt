@@ -8,9 +8,9 @@ import android.content.Context
  * @author Benhero
  * @date   2018/11/28
  */
-class InverseFilter(context: Context) : BaseFilter(context, VERTEX_SHADER, INVERSE_FRAGMENT_SHADER) {
+class InverseFilter(context: Context) : BaseFilter(context, VERTEX_SHADER, FRAGMENT_SHADER) {
     companion object {
-        val INVERSE_FRAGMENT_SHADER = """
+        const val FRAGMENT_SHADER = """
                 precision mediump float;
                 varying vec2 v_TexCoord;
                 uniform sampler2D u_TextureUnit;
