@@ -24,6 +24,6 @@ class CloneFullFilter(context: Context) : BaseFilter(context, VERTEX_SHADER, FRA
 
     override fun onCreated() {
         super.onCreated()
-        GLES20.glUniform1f(GLES20.glGetUniformLocation(program, "cloneCount"), 3.0f)
+        GLES20.glUniform1f(getUniform("cloneCount"), 3.0f)
     }
 }

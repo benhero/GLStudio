@@ -40,17 +40,10 @@ class ClonePartFilter(context: Context) : BaseFilter(context, VERTEX_SHADER,
         """
     }
 
-    var isVerticalLocation: Int = 0
-    var isHorizontalLocation: Int = 0
-    var isCloneCountLocation: Int = 0
     override fun onCreated() {
         super.onCreated()
-        isVerticalLocation = GLES20.glGetUniformLocation(program, "isVertical")
-        isHorizontalLocation = GLES20.glGetUniformLocation(program, "isHorizontal")
-        isCloneCountLocation = GLES20.glGetUniformLocation(program, "cloneCount")
-
-        GLES20.glUniform1f(isVerticalLocation, 1.0f)
-        GLES20.glUniform1f(isHorizontalLocation, 1.0f)
-        GLES20.glUniform1f(isCloneCountLocation, 3.0f)
+        GLES20.glUniform1f(getUniform("isVertical"), 1.0f)
+        GLES20.glUniform1f(getUniform("isHorizontal"), 1.0f)
+        GLES20.glUniform1f(getUniform("cloneCount"), 3.0f)
     }
 }
