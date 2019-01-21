@@ -8,17 +8,18 @@ OpenGL基础入门教程，暂定专注于2D图形绘制。
 ## 基础知识
 章节 | 完成情况
 ---| :---:
-[技术背景](https://www.jianshu.com/p/8dd045253ef7) |  √
-[基础概念](https://www.jianshu.com/p/a818684333f2)|   √
-[架构体系](https://www.jianshu.com/p/a772bfc2276b) |  √
-[几何图形绘制](https://www.jianshu.com/p/eb11a8346cf6)| √
-[正交投影](https://www.jianshu.com/p/51a405bc52ed)| √
-[渐变色](https://www.jianshu.com/p/6220228b822b)| √
-[顶点索引方式](https://www.jianshu.com/p/92c12166a935)| √
-[纹理绘制](https://www.jianshu.com/p/3659f4649f98)| √
-[多纹理绘制](https://www.jianshu.com/p/94f42d0a1939)| √
-FBO离屏渲染| √
-[基础滤镜](https://www.jianshu.com/p/dde06aefc480) |  √
+[0. 技术背景](https://www.jianshu.com/p/8dd045253ef7) |  √
+[1. 基础概念](https://www.jianshu.com/p/a818684333f2)|   √
+[2. 架构体系](https://www.jianshu.com/p/a772bfc2276b) |  √
+[3. 几何图形绘制](https://www.jianshu.com/p/eb11a8346cf6)| √
+[4. 正交投影](https://www.jianshu.com/p/51a405bc52ed)| √
+[5. 渐变色](https://www.jianshu.com/p/6220228b822b)| √
+[6. 顶点索引方式](https://www.jianshu.com/p/92c12166a935)| √
+[7.1 纹理绘制](https://www.jianshu.com/p/3659f4649f98)| √
+[7.2 多纹理绘制](https://www.jianshu.com/p/94f42d0a1939)| √
+8 FBO离屏渲染| √
+[9.1 基础颜色滤镜](https://www.jianshu.com/p/dde06aefc480) |  √
+[9.2 位置滤镜](https://www.jianshu.com/p/87ccc9bfa362)  | √
 EGL |  ○
 坐标系统&图形变换| ○
 颜色混合| ○
