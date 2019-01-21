@@ -4,7 +4,7 @@ import android.content.Context
 import android.opengl.GLES20
 
 /**
- * 完全分身克隆滤镜
+ * 完全克隆滤镜
  *
  * @author Benhero
  * @date   2019/1/18

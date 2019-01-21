@@ -6,7 +6,7 @@ import com.benhero.glstudio.R
 import com.benhero.glstudio.util.TextResourceReader
 
 /**
- * 部分分身克隆滤镜
+ * 部分克隆滤镜
  *
  * @author Benhero
  * @date   2019/1/18
