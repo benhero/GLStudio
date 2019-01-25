@@ -47,8 +47,5 @@ Number | 3|
 视频增加贴纸|○
 增加动画框架|○
 
-## 待处理问题
-- 多个program同时绘制
-
 ## 参考
 见[Android OpenGL ES学习资料](https://www.jianshu.com/p/4ff46176ccc0)所列举的博客、资料。
