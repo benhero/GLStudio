@@ -1,22 +1,22 @@
 precision mediump float;
 varying vec2 v_TexCoord;
 uniform sampler2D u_TextureUnit;
-uniform float isVertical;
-uniform float isHorizontal;
-uniform float cloneCount;
+uniform float xV;
+uniform float yV;
+
+vec2 translate(vec2 srcCoord, float x, float y) {
+    if (mod(srcCoord.y, 0.25) > 0.125) {
+        return vec2(srcCoord.x + x, srcCoord.y + y);
+    } else {
+        return vec2(srcCoord.x - x, srcCoord.y + y);
+    }
+}
+
 void main() {
-    vec4 source = texture2D(u_TextureUnit, v_TexCoord);
-    float coordX = v_TexCoord.x;
-    float coordY = v_TexCoord.y;
-    if (isVertical == 1.0) {
-        float width = 1.0 / cloneCount;
-        float startX = (1.0 - width) / 2.0;
-        coordX = mod(v_TexCoord.x, width) + startX;
+    vec2 offsetTexCoord = translate(v_TexCoord, xV, yV);
+
+    if (offsetTexCoord.x >= 0.0 && offsetTexCoord.x <= 1.0 &&
+        offsetTexCoord.y >= 0.0 && offsetTexCoord.y <= 1.0) {
+        gl_FragColor = texture2D(u_TextureUnit, offsetTexCoord);
     }
-    if (isHorizontal == 1.0) {
-        float height = 1.0 / cloneCount;
-        float startY = (1.0 - height) / 2.0;
-        coordY = mod(v_TexCoord.y, height) + startY;
-    }
-    gl_FragColor = texture2D(u_TextureUnit, vec2(coordX, coordY));
 }

@@ -21,6 +21,7 @@ class L8_1_FilterRenderer(context: Context) : BaseRenderer(context) {
     private var textureBean: TextureHelper.TextureBean? = null
 
     init {
+        filterList.add(CrossFilter(context))
         filterList.add(ClonePartFilter(context))
         filterList.add(BaseFilter(context))
         filterList.add(CloneFullFilter(context))
