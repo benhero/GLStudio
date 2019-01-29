@@ -9,5 +9,5 @@
 package com.benhero.glstudio.util
 
 object LoggerConfig {
-    val ON = true
+    val ON = false
 }
