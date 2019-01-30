@@ -96,7 +96,8 @@ class L6_1_TextureRenderer(context: Context) : BaseRenderer(context) {
         GLES20.glBlendFunc(GL10.GL_ONE, GL10.GL_ONE_MINUS_SRC_ALPHA)
     }
 
-    override fun onSurfaceChanged(glUnused: GL10?, width: Int, height: Int) {
+    override fun onSurfaceChanged(gl: GL10?, width: Int, height: Int) {
+        super.onSurfaceChanged(gl, width, height)
         GLES20.glViewport(0, 0, width, height)
         mProjectionMatrixHelper!!.enable(width, height)
     }
