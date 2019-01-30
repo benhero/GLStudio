@@ -2,8 +2,6 @@ package com.benhero.glstudio.filter
 
 import android.content.Context
 import android.opengl.GLES20
-import com.benhero.glstudio.R
-import com.benhero.glstudio.util.TextResourceReader
 
 /**
  * 部分克隆滤镜
@@ -11,8 +9,7 @@ import com.benhero.glstudio.util.TextResourceReader
  * @author Benhero
  * @date   2019/1/18
  */
-class ClonePartFilter(context: Context) : BaseFilter(context, VERTEX_SHADER,
-        TextResourceReader.readTextFileFromResource(context, R.raw.filter_test)) {
+class ClonePartFilter(context: Context) : BaseFilter(context, VERTEX_SHADER, FRAGMENT_SHADER) {
     companion object {
         const val FRAGMENT_SHADER = """
             precision mediump float;
