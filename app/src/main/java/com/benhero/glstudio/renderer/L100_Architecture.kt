@@ -23,7 +23,7 @@ import javax.microedition.khronos.opengles.GL10
  *
  * @author Benhero
  */
-class L10_Architecture(context: Context) : AnimationRenderer(context) {
+class L100_Architecture(context: Context) : AnimationRenderer(context) {
     companion object {
         private val VERTEX_SHADER = "" +
                 "uniform mat4 u_Matrix;\n" +

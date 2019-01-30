@@ -13,7 +13,7 @@ import android.view.animation.DecelerateInterpolator
 import android.view.animation.OvershootInterpolator
 import android.widget.*
 import com.benhero.glstudio.base.*
-import com.benhero.glstudio.renderer.L10_Architecture
+import com.benhero.glstudio.renderer.L100_Architecture
 import com.benhero.glstudio.renderer.L7_1_FBORenderer
 import com.benhero.glstudio.renderer.L7_2_FBORenderer
 import com.benhero.glstudio.renderer.L8_1_FilterRenderer
@@ -115,8 +115,8 @@ class MainActivity : Activity(), AdapterView.OnItemClickListener {
         glSurfaceView!!.setRenderer(renderer)
         glSurfaceView!!.renderMode = GLSurfaceView.RENDERMODE_WHEN_DIRTY
 
-        if (clickClass == L10_Architecture::class.java) {
-            chooseArchitecture(renderer as L10_Architecture)
+        if (clickClass == L100_Architecture::class.java) {
+            chooseArchitecture(renderer as L100_Architecture)
         } else if (clickClass == L7_1_FBORenderer::class.java || clickClass == L7_2_FBORenderer::class.java) {
             readCurrentFrame(renderer as BaseRenderer)
         } else if (clickClass == L8_1_FilterRenderer::class.java) {
@@ -131,7 +131,7 @@ class MainActivity : Activity(), AdapterView.OnItemClickListener {
         }
     }
 
-    private fun chooseArchitecture(renderer: L10_Architecture) {
+    private fun chooseArchitecture(renderer: L100_Architecture) {
         val imageView = GLImageView()
         imageView.resId = R.drawable.tuzki
         imageView.x = 400f
