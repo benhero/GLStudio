@@ -3,16 +3,18 @@ package com.benhero.glstudio
 import android.Manifest
 import android.app.Activity
 import android.content.Intent
-import android.media.MediaPlayer
+import android.opengl.GLSurfaceView
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.text.TextUtils
-import android.view.SurfaceHolder
-import android.view.SurfaceView
 import android.view.View
+import android.widget.SeekBar
+import android.widget.TextView
 import android.widget.Toast
+import com.benhero.glstudio.renderer.L10_1_VideoRenderer
 import com.benhero.glstudio.util.FileUtil
+import com.benhero.glstudio.util.TimeUtil
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.TedPermission
 import java.util.*
@@ -23,17 +25,28 @@ import java.util.*
  * @author Benhero
  * @date   2019/1/30
  */
-class VideoActivity : Activity() {
-    private lateinit var glSurfaceView: SurfaceView
-    private lateinit var player: MediaPlayer
+class VideoActivity : Activity(), View.OnClickListener, VideoPlayer.PlayerListener {
+    private lateinit var glSurfaceView: GLSurfaceView
+    private lateinit var player: VideoPlayer
+    private lateinit var seekBar: SeekBar
+    private lateinit var textProgress: TextView
+    private lateinit var textDuration: TextView
 
     private val REQUEST_PICK_VIDEO = 1124
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_video)
-        glSurfaceView = findViewById<View>(R.id.activity_video_surfaceView) as SurfaceView
-        player = MediaPlayer()
+        glSurfaceView = findViewById<View>(R.id.activity_video_surfaceView) as GLSurfaceView
+        seekBar = findViewById(R.id.activity_video_seekbar)
+        textProgress = findViewById(R.id.activity_video_text_progress)
+        textDuration = findViewById(R.id.activity_video_text_duration)
+        player = VideoPlayer()
+        player.setListener(this)
+        glSurfaceView.setEGLContextClientVersion(2)
+        glSurfaceView.setRenderer(L10_1_VideoRenderer(this, player))
+        glSurfaceView.renderMode = GLSurfaceView.RENDERMODE_CONTINUOUSLY
+        glSurfaceView.setOnClickListener(this)
         checkPermission()
     }
 
@@ -116,18 +129,43 @@ class VideoActivity : Activity() {
         }
         player.setDataSource(path)
         player.prepare()
-        glSurfaceView.holder.addCallback(object : SurfaceHolder.Callback {
-            override fun surfaceChanged(holder: SurfaceHolder?, format: Int, width: Int, height: Int) {
-            }
+        player.isLooping = true
+        player.setOnPreparedListener {
+            player.start()
+            textDuration.text = TimeUtil.formatVideoTime(player.duration.toLong())
+        }
+    }
 
-            override fun surfaceDestroyed(holder: SurfaceHolder?) {
-            }
+    override fun onPause() {
+        super.onPause()
+        player.pause()
+    }
 
-            override fun surfaceCreated(holder: SurfaceHolder?) {
-                player.setDisplay(holder)
-                player.isLooping = true
-                player.start()
-            }
-        })
+    override fun onDestroy() {
+        super.onDestroy()
+        player.stop()
+        player.release()
+    }
+
+    override fun onClick(v: View?) {
+        if (player.isPlaying) {
+            player.pause()
+        } else {
+            player.start()
+        }
+    }
+
+    override fun onPlayerStart() {
+    }
+
+    override fun onPlayerStop() {
+    }
+
+    override fun onPlayerPause() {
+    }
+
+    override fun onPlayerUpdate(percent: Float) {
+        seekBar.progress = (percent * 100).toInt()
+        textProgress.text = TimeUtil.formatVideoTime(player.currentPosition.toLong())
     }
 }
