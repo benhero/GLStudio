@@ -3,6 +3,7 @@ package com.benhero.glstudio
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.opengl.GLSurfaceView
@@ -13,10 +14,7 @@ import android.view.animation.DecelerateInterpolator
 import android.view.animation.OvershootInterpolator
 import android.widget.*
 import com.benhero.glstudio.base.*
-import com.benhero.glstudio.renderer.L100_Architecture
-import com.benhero.glstudio.renderer.L7_1_FBORenderer
-import com.benhero.glstudio.renderer.L7_2_FBORenderer
-import com.benhero.glstudio.renderer.L8_1_FilterRenderer
+import com.benhero.glstudio.renderer.*
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.TedPermission
 import com.jayfeng.lesscode.core.BitmapLess
@@ -46,7 +44,7 @@ class MainActivity : Activity(), AdapterView.OnItemClickListener {
         listView.adapter = adapter
         listView.onItemClickListener = this
         // 自动点击
-        val position = MainListItems.getIndex(L8_1_FilterRenderer::class.java)
+        val position = MainListItems.getIndex(L10_1_VideoRenderer::class.java)
         listView.performItemClick(adapter.getView(position, null, listView),
                 position, adapter.getItemId(position))
 
@@ -100,12 +98,16 @@ class MainActivity : Activity(), AdapterView.OnItemClickListener {
     }
 
     override fun onItemClick(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+        val clickClass = MainListItems.getClass(position)
+        if (clickClass == L10_1_VideoRenderer::class.java) {
+            startActivity(Intent(this, VideoActivity::class.java))
+            return
+        }
         glSurfaceView = GLSurfaceView(this)
         root.addView(glSurfaceView)
         glSurfaceView!!.setEGLContextClientVersion(2)
         glSurfaceView!!.setEGLConfigChooser(false)
 
-        val clickClass = MainListItems.getClass(position)
         val renderer = MainListItems.getRenderer(clickClass, this)
         if (renderer == null) {
             Toast.makeText(this, "反射构建渲染器失败", Toast.LENGTH_SHORT).show()
