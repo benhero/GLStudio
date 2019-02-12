@@ -1,13 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.opengl.GLSurfaceView
-        android:id="@+id/activity_video_surfaceView"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:background="@android:color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.benhero.glstudio.video.AspectFrameLayout
+            android:id="@+id/activity_video_content_wrapper"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center">
+
+            <android.opengl.GLSurfaceView
+                android:id="@+id/activity_video_surfaceView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+        </com.benhero.glstudio.video.AspectFrameLayout>
+    </FrameLayout>
+
 
     <TextView
         android:id="@+id/activity_video_text_progress"
@@ -15,19 +35,21 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginBottom="16dp"
-        android:text="00:00"
         android:textColor="@android:color/white"
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/activity_video_seekbar"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintHorizontal_chainStyle="spread_inside"
-        app:layout_constraintStart_toStartOf="parent"/>
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="00:00"/>
 
     <SeekBar
         android:id="@+id/activity_video_seekbar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:maxHeight="2dp"
+        android:progressDrawable="@drawable/seekbar_progress_drawable"
         app:layout_constraintBottom_toBottomOf="@+id/activity_video_text_progress"
         app:layout_constraintEnd_toStartOf="@+id/activity_video_text_duration"
         app:layout_constraintHorizontal_bias="0.5"
@@ -39,12 +61,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
-        android:text="10:00"
         android:textColor="@android:color/white"
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="@+id/activity_video_seekbar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/activity_video_seekbar"
-        app:layout_constraintTop_toTopOf="@+id/activity_video_seekbar"/>
+        app:layout_constraintTop_toTopOf="@+id/activity_video_seekbar"
+        tools:text="10:00"/>
 </android.support.constraint.ConstraintLayout>

@@ -8,6 +8,8 @@ import android.opengl.GLES20
 import android.view.Surface
 import com.benhero.glstudio.base.BaseRenderer
 import com.benhero.glstudio.util.BufferUtil
+import com.benhero.glstudio.util.VertexRotationUtil
+import com.benhero.glstudio.video.VideoInfo
 import java.nio.FloatBuffer
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
@@ -43,10 +45,10 @@ class L10_1_VideoRenderer(context: Context, private val mediaPlayer: MediaPlayer
         private val SCALE = 9.0f / 16.0f
 
         private val POINT_DATA = floatArrayOf(
-                -1.0f, -1.0f * SCALE * SCALE,
-                -1.0f, 1.0f * SCALE * SCALE,
-                1.0f, 1.0f * SCALE * SCALE,
-                1.0f, -1.0f * SCALE * SCALE)
+                -1.0f, -1.0f,
+                -1.0f, 1.0f,
+                1.0f, 1.0f,
+                1.0f, -1.0f)
 
         /**
          * 纹理坐标
@@ -59,12 +61,28 @@ class L10_1_VideoRenderer(context: Context, private val mediaPlayer: MediaPlayer
         private const val TEX_VERTEX_COMPONENT_COUNT = 2
     }
 
-    private val mVertexData: FloatBuffer
+    private var mVertexData: FloatBuffer
 
+    private var aPositionLocation: Int = 0
     private var uTextureUnitLocation: Int = 0
     private val mTexVertexBuffer: FloatBuffer
     private var textureId: Int = 0
     private var surfaceTexture: SurfaceTexture? = null
+    private var updateSurface: Boolean = false
+    private var isUpdateVideoInfo = false
+    var videoInfo: VideoInfo? = null
+        set(value) {
+            field = value
+            isUpdateVideoInfo = true
+        }
+
+    private fun updateVertex() {
+        mVertexData = BufferUtil.createFloatBuffer(VertexRotationUtil.rotate(VertexRotationUtil.getRotation(videoInfo!!.degrees), POINT_DATA))
+        mVertexData.position(0)
+        GLES20.glVertexAttribPointer(aPositionLocation, POSITION_COMPONENT_COUNT,
+                GLES20.GL_FLOAT, false, 0, mVertexData)
+        GLES20.glEnableVertexAttribArray(aPositionLocation)
+    }
 
     init {
         mVertexData = BufferUtil.createFloatBuffer(POINT_DATA)
@@ -74,7 +92,7 @@ class L10_1_VideoRenderer(context: Context, private val mediaPlayer: MediaPlayer
     override fun onSurfaceCreated(glUnused: GL10, config: EGLConfig) {
         makeProgram(VERTEX_SHADER, FRAGMENT_SHADER)
 
-        val aPositionLocation = getAttrib("a_Position")
+        aPositionLocation = getAttrib("a_Position")
         // 纹理坐标索引
         val aTexCoordLocation = getAttrib("a_TexCoord")
         uTextureUnitLocation = getUniform("u_TextureUnit")
@@ -128,13 +146,17 @@ class L10_1_VideoRenderer(context: Context, private val mediaPlayer: MediaPlayer
         GLES20.glViewport(0, 0, width, height)
     }
 
-    private var updateSurface: Boolean = false
-
     override fun onDrawFrame(glUnused: GL10) {
         if (updateSurface) {
             surfaceTexture!!.updateTexImage()
             updateSurface = false
         }
+
+        if (isUpdateVideoInfo) {
+            updateVertex()
+            isUpdateVideoInfo = false
+        }
+
         GLES20.glClear(GL10.GL_COLOR_BUFFER_BIT)
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0)
 

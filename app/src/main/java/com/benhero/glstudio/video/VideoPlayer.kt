@@ -1,4 +1,4 @@
-package com.benhero.glstudio
+package com.benhero.glstudio.video
 
 import android.media.MediaPlayer
 import android.os.Handler
@@ -88,6 +88,11 @@ class VideoPlayer : MediaPlayer(), MediaPlayer.OnCompletionListener, MediaPlayer
         if (listener != null) {
             listener!!.onPlayerStop()
         }
+    }
+
+    override fun seekTo(msec: Long, mode: Int) {
+        super.seekTo(msec, mode)
+        handler.removeCallbacksAndMessages(null)
     }
 
     /**

@@ -15,6 +15,9 @@ import android.widget.Toast
 import com.benhero.glstudio.renderer.L10_1_VideoRenderer
 import com.benhero.glstudio.util.FileUtil
 import com.benhero.glstudio.util.TimeUtil
+import com.benhero.glstudio.video.AspectFrameLayout
+import com.benhero.glstudio.video.VideoInfo
+import com.benhero.glstudio.video.VideoPlayer
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.TedPermission
 import java.util.*
@@ -25,26 +28,33 @@ import java.util.*
  * @author Benhero
  * @date   2019/1/30
  */
-class VideoActivity : Activity(), View.OnClickListener, VideoPlayer.PlayerListener {
+class VideoActivity : Activity(), View.OnClickListener, VideoPlayer.PlayerListener, SeekBar.OnSeekBarChangeListener {
     private lateinit var glSurfaceView: GLSurfaceView
+    private lateinit var contentWrapper: AspectFrameLayout
     private lateinit var player: VideoPlayer
     private lateinit var seekBar: SeekBar
     private lateinit var textProgress: TextView
     private lateinit var textDuration: TextView
+    private lateinit var videoInfo: VideoInfo
+    private lateinit var renderer: L10_1_VideoRenderer
+    private var isTrackingTouching = false
 
     private val REQUEST_PICK_VIDEO = 1124
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_video)
-        glSurfaceView = findViewById<View>(R.id.activity_video_surfaceView) as GLSurfaceView
+        contentWrapper = findViewById(R.id.activity_video_content_wrapper)
+        glSurfaceView = findViewById(R.id.activity_video_surfaceView)
         seekBar = findViewById(R.id.activity_video_seekbar)
+        seekBar.setOnSeekBarChangeListener(this)
         textProgress = findViewById(R.id.activity_video_text_progress)
         textDuration = findViewById(R.id.activity_video_text_duration)
         player = VideoPlayer()
         player.setListener(this)
         glSurfaceView.setEGLContextClientVersion(2)
-        glSurfaceView.setRenderer(L10_1_VideoRenderer(this, player))
+        renderer = L10_1_VideoRenderer(this, player)
+        glSurfaceView.setRenderer(renderer)
         glSurfaceView.renderMode = GLSurfaceView.RENDERMODE_CONTINUOUSLY
         glSurfaceView.setOnClickListener(this)
         checkPermission()
@@ -127,7 +137,10 @@ class VideoActivity : Activity(), View.OnClickListener, VideoPlayer.PlayerListen
         if (path == null) {
             return
         }
+        videoInfo = VideoInfo(path)
+        renderer.videoInfo = videoInfo
         player.setDataSource(path)
+        contentWrapper.setAspectRatio(1.0 * videoInfo.displayWidth / videoInfo.displayHeight)
         player.prepare()
         player.isLooping = true
         player.setOnPreparedListener {
@@ -165,7 +178,24 @@ class VideoActivity : Activity(), View.OnClickListener, VideoPlayer.PlayerListen
     }
 
     override fun onPlayerUpdate(percent: Float) {
-        seekBar.progress = (percent * 100).toInt()
+        if (!isTrackingTouching) {
+            seekBar.progress = (percent * 100).toInt()
+        }
         textProgress.text = TimeUtil.formatVideoTime(player.currentPosition.toLong())
+    }
+
+    override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+    }
+
+    override fun onStartTrackingTouch(seekBar: SeekBar?) {
+        isTrackingTouching = true
+    }
+
+    override fun onStopTrackingTouch(seekBar: SeekBar?) {
+        if (seekBar == null) {
+            return
+        }
+        player.seekTo((seekBar.progress / 100.0f * player.duration).toInt())
+        isTrackingTouching = false
     }
 }
