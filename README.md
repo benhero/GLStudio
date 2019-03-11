@@ -23,7 +23,7 @@ OpenGL基础入门教程，暂定专注于2D图形绘制。
 EGL |  ○
 坐标系统&图形变换| ○
 颜色混合| ○
-OES| ○
+[OES](https://www.jianshu.com/p/e98809bc326e)| ○
 GLSL语言基础 |  ○
 
 ## 专题练习
@@ -33,9 +33,7 @@ GLSL语言基础 |  ○
 基础集合图形 | 1|
 滤镜 | 1|
 相机|2|
-视频播放器|2|
-绘制数字| 1|
-Number | 3|
+[视频播放器](https://www.jianshu.com/p/e98809bc326e)|2|
 
 ## GPUImage
 专题 | 完成度
