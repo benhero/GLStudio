@@ -30,6 +30,9 @@ import java.util.*
  */
 class VideoActivity : Activity(), View.OnClickListener, VideoPlayer.PlayerListener, SeekBar.OnSeekBarChangeListener {
     private lateinit var glSurfaceView: GLSurfaceView
+    /**
+     * 用于解决不同长宽比视频的适配问题，让GL绘制尽量处于填充满容器的状态
+     */
     private lateinit var contentWrapper: AspectFrameLayout
     private lateinit var player: VideoPlayer
     private lateinit var seekBar: SeekBar
@@ -37,6 +40,9 @@ class VideoActivity : Activity(), View.OnClickListener, VideoPlayer.PlayerListen
     private lateinit var textDuration: TextView
     private lateinit var videoInfo: VideoInfo
     private lateinit var renderer: L10_1_VideoRenderer
+    /**
+     * 是否处于拉拽进度条的状态
+     */
     private var isTrackingTouching = false
 
     private val REQUEST_PICK_VIDEO = 1124

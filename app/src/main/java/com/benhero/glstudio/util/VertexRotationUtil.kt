@@ -21,6 +21,10 @@ object VertexRotationUtil {
         }
     }
 
+    fun rotate(rotation: Int, srcArray: FloatArray): FloatArray {
+        return VertexRotationUtil.rotate(getRotation(rotation), srcArray)
+    }
+
     fun rotate(rotation: VertexRotationUtil.Rotation, srcArray: FloatArray): FloatArray {
         return when (rotation) {
             VertexRotationUtil.Rotation.ROTATION_90 -> floatArrayOf(

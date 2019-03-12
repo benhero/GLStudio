@@ -18,9 +18,9 @@ class AspectFrameLayout : FrameLayout {
      */
     private var mIsAutoFit = true
 
-    constructor(context: Context) : super(context) {}
+    constructor(context: Context) : super(context)
 
-    constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {}
+    constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
 
     fun setAspectRatio(aspectRatio: Double) {
         if (aspectRatio < 0) {
@@ -77,6 +77,6 @@ class AspectFrameLayout : FrameLayout {
     }
 
     companion object {
-        private val TAG = "AspectFrameLayout"
+        private const val TAG = "AspectFrameLayout"
     }
 }

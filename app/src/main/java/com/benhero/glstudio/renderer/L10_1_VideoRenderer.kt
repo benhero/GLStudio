@@ -42,7 +42,6 @@ class L10_1_VideoRenderer(context: Context, private val mediaPlayer: MediaPlayer
                 """
 
         private const val POSITION_COMPONENT_COUNT = 2
-        private val SCALE = 9.0f / 16.0f
 
         private val POINT_DATA = floatArrayOf(
                 -1.0f, -1.0f,
@@ -75,14 +74,6 @@ class L10_1_VideoRenderer(context: Context, private val mediaPlayer: MediaPlayer
             field = value
             isUpdateVideoInfo = true
         }
-
-    private fun updateVertex() {
-        mVertexData = BufferUtil.createFloatBuffer(VertexRotationUtil.rotate(VertexRotationUtil.getRotation(videoInfo!!.degrees), POINT_DATA))
-        mVertexData.position(0)
-        GLES20.glVertexAttribPointer(aPositionLocation, POSITION_COMPONENT_COUNT,
-                GLES20.GL_FLOAT, false, 0, mVertexData)
-        GLES20.glEnableVertexAttribArray(aPositionLocation)
-    }
 
     init {
         mVertexData = BufferUtil.createFloatBuffer(POINT_DATA)
@@ -117,7 +108,6 @@ class L10_1_VideoRenderer(context: Context, private val mediaPlayer: MediaPlayer
 
     private fun createOESTextureId() {
         val textureIds = IntArray(1)
-        // 1. 创建纹理对象
         GLES20.glGenTextures(1, textureIds, 0)
 
         if (textureIds[0] == 0) {
@@ -125,18 +115,16 @@ class L10_1_VideoRenderer(context: Context, private val mediaPlayer: MediaPlayer
         }
         textureId = textureIds[0]
 
-        // 2. 将纹理绑定到OpenGL对象上
         GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, textureIds[0])
 
-        // 3. 设置纹理过滤参数:解决纹理缩放过程中的锯齿问题。若不设置，则会导致纹理为黑色
         GLES20.glTexParameteri(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR_MIPMAP_LINEAR)
         GLES20.glTexParameteri(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR)
         GLES20.glTexParameteri(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_REPEAT)
         GLES20.glTexParameteri(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_REPEAT)
+
+        // 创建SurfaceTexture、Surface，并绑定到MediaPlayer上，接收画面驱动回调
         surfaceTexture = SurfaceTexture(textureIds[0])
-
         surfaceTexture!!.setOnFrameAvailableListener(this)
-
         val surface = Surface(surfaceTexture)
         mediaPlayer.setSurface(surface)
     }
@@ -148,6 +136,7 @@ class L10_1_VideoRenderer(context: Context, private val mediaPlayer: MediaPlayer
 
     override fun onDrawFrame(glUnused: GL10) {
         if (updateSurface) {
+            // 当有画面帧解析完毕时，驱动SurfaceTexture更新纹理ID到最近一帧解析完的画面，并且驱动底层去解析下一帧画面
             surfaceTexture!!.updateTexImage()
             updateSurface = false
         }
@@ -159,14 +148,25 @@ class L10_1_VideoRenderer(context: Context, private val mediaPlayer: MediaPlayer
 
         GLES20.glClear(GL10.GL_COLOR_BUFFER_BIT)
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0)
-
         GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, textureId)
-
         GLES20.glUniform1i(uTextureUnitLocation, 0)
-
         GLES20.glDrawArrays(GLES20.GL_TRIANGLE_FAN, 0, POINT_DATA.size / POSITION_COMPONENT_COUNT)
     }
 
+    /**
+     * 根据视频方向更新顶点坐标
+     */
+    private fun updateVertex() {
+        mVertexData = BufferUtil.createFloatBuffer(VertexRotationUtil.rotate(videoInfo!!.degrees, POINT_DATA))
+        mVertexData.position(0)
+        GLES20.glVertexAttribPointer(aPositionLocation, POSITION_COMPONENT_COUNT,
+                GLES20.GL_FLOAT, false, 0, mVertexData)
+        GLES20.glEnableVertexAttribArray(aPositionLocation)
+    }
+
+    /**
+     * MediaPlayer有新的画面帧刷新时，通过SurfaceTexture的onFrameAvailable接口进行回调
+     */
     override fun onFrameAvailable(surfaceTexture: SurfaceTexture?) {
         updateSurface = true
     }

@@ -90,10 +90,8 @@ class VideoInfo(val path: String) {
         Log.d(TAG, toString())
     }
 
-    internal fun getInteger(value: String): Int {
-        return if (TextUtils.isEmpty(value)) {
-            0
-        } else Integer.valueOf(value)
+    private fun getInteger(value: String): Int {
+        return if (TextUtils.isEmpty(value)) 0 else Integer.valueOf(value)
     }
 
 
@@ -105,8 +103,6 @@ class VideoInfo(val path: String) {
     }
 
     companion object {
-
-
-        private val TAG = "VideoInfo"
+        private const val TAG = "VideoInfo"
     }
 }
