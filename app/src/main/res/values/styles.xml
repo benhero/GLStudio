@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
@@ -8,6 +8,12 @@
         <item name="colorAccent">@color/colorAccent</item>
 
         <item name="android:windowFullscreen">true</item>
+    </style>
+
+    <style name="AppTheme.TranslucentDecor" parent="AppTheme">
+        <item name="android:windowTranslucentStatus" tools:targetApi="kitkat">true</item>
+        <item name="android:windowTranslucentNavigation" tools:targetApi="kitkat">true</item>
+        <item name="android:windowContentOverlay">@null</item>
     </style>
 
 </resources>

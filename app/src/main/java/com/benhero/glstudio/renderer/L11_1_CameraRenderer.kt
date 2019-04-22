@@ -2,25 +2,23 @@ package com.benhero.glstudio.renderer
 
 import android.content.Context
 import android.graphics.SurfaceTexture
-import android.media.MediaPlayer
 import android.opengl.GLES11Ext
 import android.opengl.GLES20
-import android.view.Surface
 import com.benhero.glstudio.base.BaseRenderer
+import com.benhero.glstudio.camera.ICamera
 import com.benhero.glstudio.util.BufferUtil
 import com.benhero.glstudio.util.VertexRotationUtil
-import com.benhero.glstudio.video.VideoInfo
 import java.nio.FloatBuffer
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
 
 /**
- * 视频绘制
+ * 相机绘制
  *
  * @author Benhero
  */
-class L10_1_VideoRenderer(context: Context, private val mediaPlayer: MediaPlayer) : BaseRenderer(context), SurfaceTexture.OnFrameAvailableListener {
+class L11_1_CameraRenderer(context: Context, private val camera: ICamera) : BaseRenderer(context), SurfaceTexture.OnFrameAvailableListener {
     companion object {
         private const val VERTEX_SHADER = """
                 attribute vec4 a_Position;
@@ -67,13 +65,8 @@ class L10_1_VideoRenderer(context: Context, private val mediaPlayer: MediaPlayer
     private val mTexVertexBuffer: FloatBuffer
     private var textureId: Int = 0
     private var surfaceTexture: SurfaceTexture? = null
-    private var updateSurface: Boolean = false
-    private var isUpdateVideoInfo = false
-    var videoInfo: VideoInfo? = null
-        set(value) {
-            field = value
-            isUpdateVideoInfo = true
-        }
+    private var updateSurface = false
+    private var isSwitchCamera = false
 
     init {
         mVertexData = BufferUtil.createFloatBuffer(POINT_DATA)
@@ -122,28 +115,28 @@ class L10_1_VideoRenderer(context: Context, private val mediaPlayer: MediaPlayer
         GLES20.glTexParameteri(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_REPEAT)
         GLES20.glTexParameteri(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_REPEAT)
 
-        // 创建SurfaceTexture、Surface，并绑定到MediaPlayer上，接收画面驱动回调
+        // 创建SurfaceTexture、Surface，并绑定到Camera上，接收画面驱动回调
         surfaceTexture = SurfaceTexture(textureIds[0])
         surfaceTexture!!.setOnFrameAvailableListener(this)
-        val surface = Surface(surfaceTexture)
-        mediaPlayer.setSurface(surface)
+        camera.setPreviewTexture(surfaceTexture)
     }
 
     override fun onSurfaceChanged(gl: GL10?, width: Int, height: Int) {
         super.onSurfaceChanged(gl, width, height)
         GLES20.glViewport(0, 0, width, height)
+        updateVertex()
     }
 
     override fun onDrawFrame(glUnused: GL10) {
+        if (isSwitchCamera) {
+            isSwitchCamera = false
+            createOESTextureId()
+            updateVertex()
+        }
         if (updateSurface) {
             // 当有画面帧解析完毕时，驱动SurfaceTexture更新纹理ID到最近一帧解析完的画面，并且驱动底层去解析下一帧画面
             surfaceTexture!!.updateTexImage()
             updateSurface = false
-        }
-
-        if (isUpdateVideoInfo) {
-            updateVertex()
-            isUpdateVideoInfo = false
         }
 
         GLES20.glClear(GL10.GL_COLOR_BUFFER_BIT)
@@ -154,10 +147,12 @@ class L10_1_VideoRenderer(context: Context, private val mediaPlayer: MediaPlayer
     }
 
     /**
-     * 根据视频方向更新顶点坐标
+     * 根据相机方向更新顶点坐标
      */
     private fun updateVertex() {
-        mVertexData = BufferUtil.createFloatBuffer(VertexRotationUtil.rotate(POINT_DATA, videoInfo!!.degrees))
+        var array = VertexRotationUtil.rotate(POINT_DATA, camera.rotation)
+        array = VertexRotationUtil.flip(array, camera.isFront)
+        mVertexData = BufferUtil.createFloatBuffer(array)
         mVertexData.position(0)
         GLES20.glVertexAttribPointer(aPositionLocation, POSITION_COMPONENT_COUNT,
                 GLES20.GL_FLOAT, false, 0, mVertexData)
@@ -165,9 +160,13 @@ class L10_1_VideoRenderer(context: Context, private val mediaPlayer: MediaPlayer
     }
 
     /**
-     * MediaPlayer有新的画面帧刷新时，通过SurfaceTexture的onFrameAvailable接口进行回调
+     * 有新的画面帧刷新时，通过SurfaceTexture的onFrameAvailable接口进行回调
      */
     override fun onFrameAvailable(surfaceTexture: SurfaceTexture?) {
         updateSurface = true
+    }
+
+    fun switchCamera() {
+        isSwitchCamera = true
     }
 }

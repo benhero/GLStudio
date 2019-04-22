@@ -44,7 +44,7 @@ class MainActivity : Activity(), AdapterView.OnItemClickListener {
         listView.adapter = adapter
         listView.onItemClickListener = this
         // 自动点击
-        val position = MainListItems.getIndex(L10_1_VideoRenderer::class.java)
+        val position = MainListItems.getIndex(L11_1_CameraRenderer::class.java)
         listView.performItemClick(adapter.getView(position, null, listView),
                 position, adapter.getItemId(position))
 
@@ -101,6 +101,10 @@ class MainActivity : Activity(), AdapterView.OnItemClickListener {
         val clickClass = MainListItems.getClass(position)
         if (clickClass == L10_1_VideoRenderer::class.java) {
             startActivity(Intent(this, VideoActivity::class.java))
+            return
+        }
+        if (clickClass == L11_1_CameraRenderer::class.java) {
+            startActivity(Intent(this, CameraActivity::class.java))
             return
         }
         glSurfaceView = GLSurfaceView(this)

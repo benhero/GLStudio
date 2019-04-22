@@ -21,7 +21,7 @@ object VertexRotationUtil {
         }
     }
 
-    fun rotate(rotation: Int, srcArray: FloatArray): FloatArray {
+    fun rotate(srcArray: FloatArray, rotation: Int): FloatArray {
         return VertexRotationUtil.rotate(getRotation(rotation), srcArray)
     }
 
@@ -44,5 +44,24 @@ object VertexRotationUtil {
                     srcArray[4], srcArray[5])
             else -> srcArray
         }
+    }
+
+    fun flip(srcArray: FloatArray, isVertical: Boolean = false, isHorizontal: Boolean = false): FloatArray {
+        var temp = floatArrayOf(
+                srcArray[0], srcArray[1],
+                srcArray[2], srcArray[3],
+                srcArray[4], srcArray[5],
+                srcArray[6], srcArray[7])
+        temp = if (isVertical) floatArrayOf(
+                temp[2], temp[3],
+                temp[0], temp[1],
+                temp[6], temp[7],
+                temp[4], temp[5]) else temp
+        temp = if (isHorizontal) floatArrayOf(
+                temp[6], temp[7],
+                temp[4], temp[5],
+                temp[2], temp[3],
+                temp[0], temp[1]) else temp
+        return temp
     }
 }
