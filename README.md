@@ -31,7 +31,7 @@ GLSL语言基础 |  ○
 ---|:---:|
 [音视频基础知识](https://www.jianshu.com/p/11155c7e8b09)|√|
 [视频播放器](https://www.jianshu.com/p/e98809bc326e)|√|
-相机|○|
+[相机](https://www.jianshu.com/p/01327c378eb2)|√|
 
 
 ## GPUImage
