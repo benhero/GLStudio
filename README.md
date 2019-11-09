@@ -17,7 +17,7 @@ OpenGL基础入门教程，暂定专注于2D图形绘制。
 [6. 顶点索引方式](https://www.jianshu.com/p/92c12166a935)| √
 [7.1 纹理绘制](https://www.jianshu.com/p/3659f4649f98)| √
 [7.2 多纹理绘制](https://www.jianshu.com/p/94f42d0a1939)| √
-8 FBO离屏渲染| √
+[8 FBO离屏渲染](https://www.jianshu.com/p/487916d9c9cf)| √
 [9.1 基础颜色滤镜](https://www.jianshu.com/p/dde06aefc480) |  √
 [9.2 位置滤镜](https://www.jianshu.com/p/87ccc9bfa362)  | √
 EGL |  ○
