@@ -43,5 +43,8 @@ GLSL语言基础 |  ○
 视频增加贴纸|○
 增加动画框架|○
 
+## APK
+https://github.com/benhero/GLStudio/releases/download/1.0/GLStudio.apk
+
 ## 参考
 见[Android OpenGL ES学习资料](https://www.jianshu.com/p/4ff46176ccc0)所列举的博客、资料。
