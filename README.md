@@ -43,6 +43,10 @@ GLSL语言基础 |  ○
 视频增加贴纸|○
 增加动画框架|○
 
+## 预览
+![Filter 1](https://raw.githubusercontent.com/benhero/GLStudio/master/screenshots/filter_1.webp)
+![Filter 2](https://raw.githubusercontent.com/benhero/GLStudio/master/screenshots/filter_1.webp)
+
 ## APK
 https://github.com/benhero/GLStudio/releases/download/1.0/GLStudio.apk
 
