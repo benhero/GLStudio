@@ -45,7 +45,7 @@ GLSL语言基础 |  ○
 
 ## 预览
 ![Filter 1](https://raw.githubusercontent.com/benhero/GLStudio/master/screenshots/filter_1.webp)
-![Filter 2](https://raw.githubusercontent.com/benhero/GLStudio/master/screenshots/filter_1.webp)
+![Filter 2](https://raw.githubusercontent.com/benhero/GLStudio/master/screenshots/filter_2.webp)
 
 ## APK
 https://github.com/benhero/GLStudio/releases/download/1.0/GLStudio.apk
