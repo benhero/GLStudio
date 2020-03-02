@@ -44,6 +44,7 @@ GLSL语言基础 |  ○
 增加动画框架|○
 
 ## 预览
+![Project](https://github.com/benhero/GLStudio/blob/master/screenshots/project.webp)
 ![Filter 1](https://raw.githubusercontent.com/benhero/GLStudio/master/screenshots/filter_1.webp)
 ![Filter 2](https://raw.githubusercontent.com/benhero/GLStudio/master/screenshots/filter_2.webp)
 
