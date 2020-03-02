@@ -1,6 +1,5 @@
 package com.benhero.glstudio
 
-import android.Manifest
 import android.app.Activity
 import android.graphics.drawable.Animatable
 import android.hardware.Camera
@@ -8,13 +7,9 @@ import android.opengl.GLSurfaceView
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
-import android.widget.Toast
 import com.benhero.glstudio.camera.CameraApi14
 import com.benhero.glstudio.renderer.L11_1_CameraRenderer
 import com.benhero.glstudio.video.AspectFrameLayout
-import com.gun0912.tedpermission.PermissionListener
-import com.gun0912.tedpermission.TedPermission
-import java.util.*
 import java.util.concurrent.Executors
 
 /**
@@ -85,18 +80,6 @@ class CameraActivity : Activity(), View.OnClickListener {
     }
 
     private fun checkPermission() {
-        TedPermission.with(this@CameraActivity)
-                .setPermissionListener(object : PermissionListener {
-                    override fun onPermissionGranted() {
-                    }
 
-                    override fun onPermissionDenied(deniedPermissions: ArrayList<String>) {
-                        Toast.makeText(this@CameraActivity, "Permission Denied\n" + deniedPermissions.toString(), Toast
-                                .LENGTH_SHORT).show()
-                    }
-                })
-                .setDeniedMessage("If you reject permission,you can not use this service\n\nPlease turn on permissions at " + "[Setting] > [Permission]")
-                .setPermissions(Manifest.permission.CAMERA)
-                .check()
     }
 }

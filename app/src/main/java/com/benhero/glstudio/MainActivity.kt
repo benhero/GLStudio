@@ -44,9 +44,9 @@ class MainActivity : Activity(), AdapterView.OnItemClickListener {
         listView.adapter = adapter
         listView.onItemClickListener = this
         // 自动点击
-        val position = MainListItems.getIndex(L11_1_CameraRenderer::class.java)
-        listView.performItemClick(adapter.getView(position, null, listView),
-                position, adapter.getItemId(position))
+//        val position = MainListItems.getIndex(L11_1_CameraRenderer::class.java)
+//        listView.performItemClick(adapter.getView(position, null, listView),
+//                position, adapter.getItemId(position))
 
         TedPermission.with(this@MainActivity)
                 .setPermissionListener(object : PermissionListener {
@@ -104,7 +104,19 @@ class MainActivity : Activity(), AdapterView.OnItemClickListener {
             return
         }
         if (clickClass == L11_1_CameraRenderer::class.java) {
-            startActivity(Intent(this, CameraActivity::class.java))
+            TedPermission.with(this)
+                    .setPermissionListener(object : PermissionListener {
+                        override fun onPermissionGranted() {
+                            startActivity(Intent(this@MainActivity, CameraActivity::class.java))
+                        }
+
+                        override fun onPermissionDenied(deniedPermissions: ArrayList<String>) {
+                            Toast.makeText(this@MainActivity, "Permission Denied\n" + deniedPermissions.toString(), Toast.LENGTH_SHORT).show()
+                        }
+                    })
+                    .setDeniedMessage("If you reject permission,you can not use this service\n\nPlease turn on permissions at " + "[Setting] > [Permission]")
+                    .setPermissions(Manifest.permission.CAMERA)
+                    .check()
             return
         }
         glSurfaceView = GLSurfaceView(this)
