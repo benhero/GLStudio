@@ -12,9 +12,29 @@ android {
         versionCode 1
         versionName "1.0"
     }
+
+    signingConfigs {
+        release {
+            storeFile file("BenheroGithub.jks")
+            storePassword "BenheroGithub"
+            keyAlias "BenheroGithub"
+            keyPassword "BenheroGithub"
+        }
+        debug {
+            storeFile file("BenheroGithub.jks")
+            storePassword "BenheroGithub"
+            keyAlias "BenheroGithub"
+            keyPassword "BenheroGithub"
+        }
+    }
+
     buildTypes {
+        debug {
+            signingConfig signingConfigs.debug
+        }
         release {
             minifyEnabled false
+            signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
