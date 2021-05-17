@@ -39,7 +39,7 @@ class MainActivity : Activity(), AdapterView.OnItemClickListener {
 
         root = findViewById<View>(R.id.main_root) as ViewGroup
         listView = findViewById<View>(R.id.main_list) as ListView
-        val adapter = ArrayAdapter<MainListItems.Item>(this,
+        val adapter = ArrayAdapter(this,
                 android.R.layout.simple_list_item_1, android.R.id.text1, MainListItems.ITEMS)
         listView.adapter = adapter
         listView.onItemClickListener = this
@@ -55,7 +55,7 @@ class MainActivity : Activity(), AdapterView.OnItemClickListener {
                     }
 
                     override fun onPermissionDenied(deniedPermissions: ArrayList<String>) {
-                        Toast.makeText(this@MainActivity, "Permission Denied\n" + deniedPermissions.toString(), Toast
+                        Toast.makeText(this@MainActivity, "Permission Denied\n$deniedPermissions", Toast
                                 .LENGTH_SHORT).show()
                     }
                 })
@@ -111,7 +111,7 @@ class MainActivity : Activity(), AdapterView.OnItemClickListener {
                         }
 
                         override fun onPermissionDenied(deniedPermissions: ArrayList<String>) {
-                            Toast.makeText(this@MainActivity, "Permission Denied\n" + deniedPermissions.toString(), Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this@MainActivity, "Permission Denied\n$deniedPermissions", Toast.LENGTH_SHORT).show()
                         }
                     })
                     .setDeniedMessage("If you reject permission,you can not use this service\n\nPlease turn on permissions at " + "[Setting] > [Permission]")
@@ -151,7 +151,7 @@ class MainActivity : Activity(), AdapterView.OnItemClickListener {
 
     private fun chooseArchitecture(renderer: L100_Architecture) {
         val imageView = GLImageView()
-        imageView.resId = R.drawable.tuzki
+        imageView.resId = R.drawable.pikachu
         imageView.x = 400f
         imageView.y = 400f
         imageView.alpha = 1f

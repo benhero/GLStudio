@@ -83,7 +83,7 @@ class L6_2_TextureRenderer(context: Context) : BaseRenderer(context) {
         uTextureUnitLocation = getUniform("u_TextureUnit")
         // 纹理数据
         mTextureBean = TextureHelper.loadTexture(context, R.drawable.pikachu)
-        mTextureBean2 = TextureHelper.loadTexture(context, R.drawable.tuzki)
+        mTextureBean2 = TextureHelper.loadTexture(context, R.drawable.squirtle)
 
         // 加载纹理坐标
         mTexVertexBuffer.position(0)

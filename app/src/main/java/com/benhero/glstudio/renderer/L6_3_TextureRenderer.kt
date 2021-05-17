@@ -105,7 +105,7 @@ class L6_3_TextureRenderer(context: Context) : BaseRenderer(context) {
     private var positionLocation: Int = 0
     private var pikachuBean: TextureHelper.TextureBean? = null
     private var maskBean: TextureHelper.TextureBean? = null
-    private var tuzkiBean: TextureHelper.TextureBean? = null
+    private var squirtleBean: TextureHelper.TextureBean? = null
 
     init {
         pikachuVertexBuffer = BufferUtil.createFloatBuffer(DEFAULT_VERTEX_DATA)
@@ -138,7 +138,7 @@ class L6_3_TextureRenderer(context: Context) : BaseRenderer(context) {
 
         pikachuBean = TextureHelper.loadTexture(context, R.drawable.pikachu)
         maskBean = TextureHelper.loadTexture(context, R.drawable.square)
-        tuzkiBean = TextureHelper.loadTexture(context, R.drawable.tuzki)
+        squirtleBean = TextureHelper.loadTexture(context, R.drawable.squirtle)
 
         textureBuffer.position(0)
         GLES20.glVertexAttribPointer(texCoordLocation, TEX_VERTEX_COMPONENT_COUNT, GLES20.GL_FLOAT, false, 0, textureBuffer)
@@ -181,7 +181,7 @@ class L6_3_TextureRenderer(context: Context) : BaseRenderer(context) {
 
     private fun drawTuzki() {
         GLES20.glActiveTexture(GLES20.GL_TEXTURE1)
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, tuzkiBean!!.textureId)
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, squirtleBean!!.textureId)
         GLES20.glUniform1i(textureLocation2, 1)
     }
 
