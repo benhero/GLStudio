@@ -12,11 +12,11 @@ import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
 /**
- * 多纹理绘制
+ * 多纹理绘制:单个纹理单元
  *
  * @author Benhero
  */
-class L6_2_TextureRenderer(context: Context) : BaseRenderer(context) {
+class L6_2_1TextureRenderer(context: Context) : BaseRenderer(context) {
     companion object {
         private val VERTEX_SHADER = """
                 uniform mat4 u_Matrix;
@@ -59,6 +59,7 @@ class L6_2_TextureRenderer(context: Context) : BaseRenderer(context) {
 
     private var uTextureUnitLocation: Int = 0
     private val mTexVertexBuffer: FloatBuffer
+
     /**
      * 纹理数据
      */
@@ -104,13 +105,15 @@ class L6_2_TextureRenderer(context: Context) : BaseRenderer(context) {
     override fun onDrawFrame(glUnused: GL10) {
         GLES20.glClear(GL10.GL_COLOR_BUFFER_BIT)
         drawPikachu()
-        drawTuzki()
+        drawSquirtle()
     }
 
     private fun drawPikachu() {
         mVertexData.position(0)
-        GLES20.glVertexAttribPointer(mAPositionLocation, POSITION_COMPONENT_COUNT,
-                GLES20.GL_FLOAT, false, 0, mVertexData)
+        GLES20.glVertexAttribPointer(
+            mAPositionLocation, POSITION_COMPONENT_COUNT,
+            GLES20.GL_FLOAT, false, 0, mVertexData
+        )
         GLES20.glEnableVertexAttribArray(mAPositionLocation)
 
         // 设置当前活动的纹理单元为纹理单元0
@@ -121,10 +124,12 @@ class L6_2_TextureRenderer(context: Context) : BaseRenderer(context) {
         GLES20.glDrawArrays(GLES20.GL_TRIANGLE_FAN, 0, POINT_DATA.size / POSITION_COMPONENT_COUNT)
     }
 
-    private fun drawTuzki() {
+    private fun drawSquirtle() {
         mVertexData2.position(0)
-        GLES20.glVertexAttribPointer(mAPositionLocation, POSITION_COMPONENT_COUNT,
-                GLES20.GL_FLOAT, false, 0, mVertexData2)
+        GLES20.glVertexAttribPointer(
+            mAPositionLocation, POSITION_COMPONENT_COUNT,
+            GLES20.GL_FLOAT, false, 0, mVertexData2
+        )
         GLES20.glEnableVertexAttribArray(mAPositionLocation)
 
         // 绑定新的纹理ID到已激活的纹理单元上
