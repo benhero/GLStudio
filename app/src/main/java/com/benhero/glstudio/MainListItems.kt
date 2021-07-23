@@ -33,6 +33,7 @@ object MainListItems {
         addItem(Item(L8_1_FilterRenderer::class.java, "L8_1_滤镜渲染"))
         addItem(Item(L10_1_VideoRenderer::class.java, "L10_1_视频绘制"))
         addItem(Item(L11_1_CameraRenderer::class.java, "L11_1_相机绘制"))
+        addItem(Item(L12_FileRenderer::class.java, "L12_GLSL文件加载"))
         addItem(Item(L100_Architecture::class.java, "L100_动画架构"))
 
         addItem(Item(P1_1_PointRenderer::class.java, "P1_1_动态改变顶点位置 & 颜色"))
