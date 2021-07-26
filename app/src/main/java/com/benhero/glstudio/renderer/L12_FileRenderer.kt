@@ -5,7 +5,7 @@ import android.opengl.GLES20
 import com.benhero.glstudio.R
 import com.benhero.glstudio.base.BaseRenderer
 import com.benhero.glstudio.util.BufferUtil
-import com.benhero.glstudio.util.GLSLFileReadUtil
+import com.benhero.glstudio.util.TextResourceReader
 import java.nio.FloatBuffer
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
@@ -29,19 +29,20 @@ class L12_FileRenderer(context: Context) : BaseRenderer(context) {
     }
 
     override fun onSurfaceCreated(glUnused: GL10, config: EGLConfig) {
-        GLSLFileReadUtil.readFromRaw(context, R.raw.l12_vertex)?.let { vertex ->
-            GLSLFileReadUtil.readFromRaw(context, R.raw.l12_fragment)?.let { fragment ->
-                makeProgram(vertex, fragment)
-            }
-        }
+        val vertex = TextResourceReader.readTextFileFromRaw(context, R.raw.l12_vertex)
+        val fragment = TextResourceReader.readTextFileFromRaw(context, R.raw.l12_fragment)
+        makeProgram(vertex, fragment)
+
         GLES20.glClearColor(1.0f, 1.0f, 1.0f, 1.0f)
 
         val aPositionLocation = getAttrib("a_Position")
         uColorLocation = getUniform("u_Color")
 
         vertexData.position(0)
-        GLES20.glVertexAttribPointer(aPositionLocation, POSITION_COMPONENT_COUNT, GLES20.GL_FLOAT,
-                false, 0, vertexData)
+        GLES20.glVertexAttribPointer(
+            aPositionLocation, POSITION_COMPONENT_COUNT, GLES20.GL_FLOAT,
+            false, 0, vertexData
+        )
         GLES20.glEnableVertexAttribArray(aPositionLocation)
     }
 
